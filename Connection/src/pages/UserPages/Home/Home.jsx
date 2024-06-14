@@ -1,5 +1,5 @@
 import React from 'react'
-import Users from '../../../components/Chatpage/Users'
+import Users from '../../../components/Chatpage/SideDrawer'
 
 function Home() {
   return (
