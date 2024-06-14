@@ -12,7 +12,6 @@ function UserRoutes() {
             <Route path='/' element={<Home/>}/>
             <Route path='/login' element={<UserLogin/>}/>
             <Route path='/signup' element={<SignupPage/>}/>
-
         </Routes>
 
     </div>

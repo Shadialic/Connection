@@ -21,3 +21,14 @@ export async function UserData(userData,image) {
         throw err; 
     }
 }
+
+export async function LoginData(userData) {
+    try {
+        const response = await UserApi.post("/login", userData);
+        console.log(response.data); 
+        return response.data; 
+    } catch (err) {
+        console.error('Error in UserData:', err);
+        throw err; 
+    }
+}

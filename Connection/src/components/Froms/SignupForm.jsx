@@ -23,35 +23,28 @@ function SignupForm() {
     const trimmedUserName = userName.trim();
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
-
-    if (!trimmedUserName || !trimmedEmail || !trimmedPassword ||!image) {
+    if (!trimmedUserName || !trimmedEmail || !trimmedPassword || !image) {
       toast.error("All fields are required");
       return;
     }
-
     if (!validateEmail(trimmedEmail)) {
       toast.error("Invalid email address");
       return;
     }
-
     if (trimmedPassword.length < 6) {
       toast.error("Password must be at least 6 characters long");
       return;
     }
-    const userData = await UserData({
-      userName: userName,
-      email: email,
-      password: password,
-    },image);
-    toast(userData.message)
-
-    // Add your form submission logic here
-    console.log(
-      userData,'00000000000000000000'
+    const userData = await UserData(
+      {
+        userName: userName,
+        email: email,
+        password: password,
+      },
+      image
     );
-
-    // Navigate to a different page after successful signup
-    navigate("/login");
+    toast(userData.message);
+     navigate("/login");
   };
 
   return (

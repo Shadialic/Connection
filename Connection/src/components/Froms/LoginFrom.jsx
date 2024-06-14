@@ -1,10 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import login from "../../../public/signup.jpg";
 import bg from "../../../public/bglogin.webp";
 import user from "../../../public/user.svg";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { LoginData } from "../../api/UserApi";
+import toast, { Toaster } from "react-hot-toast";
+import { useGoogleLogin } from "@react-oauth/google";
+
 function LoginForm() {
-  const navigate=useNavigate()
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  // const GoogleLogin = useGoogleLogin({
+  //   onSuccess: (codeResponse) => setUser(codeResponse),
+  //   onError: () => toast.error("Goole login failed"),
+  // });
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+  const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const trimmedEmail = formData.email.trim();
+    const trimmedPassword = formData.password.trim();
+    if (!trimmedEmail || !trimmedPassword) {
+      toast.error("All fields are required");
+      return;
+    }
+    if (!validateEmail(trimmedEmail)) {
+      toast.error("Invalid email address");
+      return;
+    }
+    try {
+      const userData = await LoginData({
+        formData,
+      });
+      toast(userData.alert);
+      localStorage.setItem("token", userData.token);
+      if (userData.status && userData.token) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("Login failed. Please try again.");
+    }
+  };
+
   return (
     <div className="w-screen h-screen bg-[#caf0f8] flex justify-center items-center relative">
       <img
@@ -25,7 +76,7 @@ function LoginForm() {
             <img src={user} alt="" className="w-32" />
             <h1>Sign in to your Account</h1>
             <form
-              action=""
+              onSubmit={handleSubmit}
               className="flex flex-col p-2 justify-center items-center gap-4 w-full"
             >
               <input
@@ -33,14 +84,18 @@ function LoginForm() {
                 id="email"
                 className="outline-none border-2 h-10 w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
                 placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
               />
               <input
                 type="password"
                 id="password"
                 className="outline-none border-2 h-10 w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
                 placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
               />
-              <a className="s text-[14px] text-[#0077b6] pr-2">
+              <a className="text-[14px] text-[#0077b6] pr-2">
                 Forgot Password?
               </a>
               <div className="flex justify-center w-full gap-10">
@@ -51,10 +106,11 @@ function LoginForm() {
                   Sign In
                 </button>
                 <button
-                 onClick={()=>navigate('/signup')}
+                  type="button"
+                  onClick={() => navigate("/signup")}
                   className="h-9 w-[18%] text-[#8338ec] border-2 border-[#8338ec] rounded-full"
                 >
-                  Sign Up{" "}
+                  Sign Up
                 </button>
               </div>
             </form>
@@ -62,7 +118,7 @@ function LoginForm() {
           </div>
         </div>
       </div>
-      {/* </div> */}
+      <Toaster />
     </div>
   );
 }
