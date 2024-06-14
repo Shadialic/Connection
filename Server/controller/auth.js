@@ -1,6 +1,6 @@
 import UserDb from "../model/userModel.js";
 import bcrypt from "bcryptjs";
-import { createSecretToken } from "../utils/Jwt/secretoken..js";
+import { createSecretToken } from "../utils/Jwt/secretoken.js";
 
 // const LoadUser = async (req, res) => {
 //     try {
@@ -79,5 +79,20 @@ const LoadUser = async (req, res) => {
   }
 };
 
+const getAllUsers=async (req,res)=>{
+  try{
+    const keyword=req.quary.search?{
+      $or:[
+        {userName:{$regex:req.quary.search,$options:"i"}},
+        {email:{$regex:req.quary.search,$options:"i"}},
+      ]
+    }:{};
+    // const user=(await UserDb.findAll(keyword)).find({id:{$ne:req.}})
+
+  }catch(err){
+    console.log(err);
+  }
+}
+
 // Export the functions
-export { postUser,LoadUser };
+export { postUser,LoadUser,getAllUsers };

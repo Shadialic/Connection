@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
-import sequelize from './sequelize';
-import User from './userModel';
-import Chat from './chatModel';
+import sequelize from './sequelize.js';
+import User from './userModel.js';
+import Chat from './chatModel.js';
 
 const Message = sequelize.define('Message', {
   content: {
@@ -15,15 +15,19 @@ const Message = sequelize.define('Message', {
       key: 'id'
     }
   },
-  chat:{
-    type:DataTypes.STRING,
-    references:{
-        model:Chat,
-        key:'id'
+  chatId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Chat,
+      key: 'id'
     }
   }
 },{
     timestamps:true
 });
+
+// Associations
+Message.belongsTo(User, { as: 'sender', foreignKey: 'senderId' });
+Message.belongsTo(Chat, { as: 'chat', foreignKey: 'chatId' });
 
 export default Message;

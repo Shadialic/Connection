@@ -4,7 +4,7 @@ import multer from 'multer';
 const userRouter = Router();
 const upload = multer({ dest: 'uploads/' });
 
-
+userRouter.get('/',getAllUsers)
 userRouter.post('/login',LoadUser);
 userRouter.post('/Signup',upload.single('image'),postUser)
 

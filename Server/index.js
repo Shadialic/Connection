@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import userRouter from './routes/userRoute.js';
+import chatRouter from './routes/chatRoute.js';
 
 dotenv.config();
 
@@ -38,6 +39,8 @@ sequelize.sync()
   });
 
 app.use('/', userRouter);
+app.use('/chat', chatRouter);
+
 
 // Start the server
 const PORT = process.env.PORT || 3000;

@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
-import sequelize from './sequelize';
-import User from './User';
-import Message from './Message';
+import sequelize from './sequelize.js';
+import User from './userModel.js';
+import Message from './messageModel.js';
 
 const Chat = sequelize.define('Chat', {
   chatName: {
@@ -19,14 +19,21 @@ const Chat = sequelize.define('Chat', {
       key: 'id'
     },
     allowNull: false
+  },
+  latestMessageId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Message,
+      key: 'id'
+    }
   }
 },{
     timestamps:true
 });
 
 // Associations
-Chat.belongsToMany(User, { through: 'ChatUsers' }); // Many-to-Many relationship with User
-User.belongsToMany(Chat, { through: 'ChatUsers' });
+Chat.belongsToMany(User, { through: 'ChatUsers', as: 'users' }); // Many-to-Many relationship with User
+User.belongsToMany(Chat, { through: 'ChatUsers', as: 'chats' });
 
 Chat.belongsTo(User, { as: 'admin', foreignKey: 'adminId' }); // Admin reference
 Chat.belongsTo(Message, { as: 'latestMessage', foreignKey: 'latestMessageId' });
