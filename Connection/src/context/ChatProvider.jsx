@@ -9,9 +9,20 @@ const ChatProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem('token'));
-    setUser(userInfo);
-    if (!userInfo) {
+    const token = localStorage.getItem('token');
+    
+    if (token) {
+      // Decode the JWT to get user info, or fetch user info from server
+      // Assuming the user information is in the token payload
+      try {
+        const userInfo = JSON.parse(atob(token.split('.')[1])); // This decodes the JWT payload
+        setUser(userInfo);
+      } catch (error) {
+        console.error("Invalid token format");
+        localStorage.removeItem('token'); // Clean up invalid token
+        navigate('/login');
+      }
+    } else {
       navigate('/login');
     }
   }, [navigate]);
