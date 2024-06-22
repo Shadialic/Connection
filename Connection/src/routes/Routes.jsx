@@ -4,6 +4,7 @@ import Home from '../pages/UserPages/Home/Home';
 import UserLogin from '../pages/UserPages/Login/UserLogin';
 import SignupPage from '../pages/UserPages/Signup/SignupPage';
 import ChatPage from '../pages/UserPages/Chat/ChatPage';
+import Otp from '../components/Authentication/OtpPage';
 
 
 function UserRoutes() {
@@ -11,6 +12,8 @@ function UserRoutes() {
     <div>
         <Routes>
             <Route path='/' element={<Home/>}/>
+            <Route path='/otp' element={<Otp/>}/>
+
             <Route path='/chats' element={<ChatPage/>}/>
 
             <Route path='/login' element={<UserLogin/>}/>

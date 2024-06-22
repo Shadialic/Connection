@@ -11,7 +11,7 @@ import ChatLoading from './ChatLoading';
 import { getSender } from "../../config/ChatLogics";
 import GroupchatModal from "../modals/GroupchatModal";
 
-function MyChats() {
+function MyChats({fetchAgain}) {
   const [loggerUser, setLoggetuser] = useState();
   const { selectedChat, setSelectedChat, Chats, setChats, user } = useChatState();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -41,7 +41,7 @@ function MyChats() {
       }
     }
     fetchChats();
-  }, []);
+  }, [fetchAgain]);
 
   const fetchChats = async () => {
     try {
@@ -58,22 +58,24 @@ function MyChats() {
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDirection="column"
       padding={2}
-      width={{ base: "100%", md: "31%" }}
+      // width={{ base: "100%", md: "31%" }}
       borderRadius="lg"
       borderWidth="1px"
-      className="w-[30%] border-r-2"
+      className=" w-full h-full border-r-2  "
     >
-      <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" mb={2}>
+      <div className="fixed w-fit z-20 ">
+      <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" mb={2} className='w-full'>
         <Typography variant="h5" className="font-prompt-semibold text-black text-2xl mb-4 p-4">
           My Chats
         </Typography>
         <Button onClick={handleOpenProfile} variant="contained" color="primary">Create New Group</Button>
       </Box>
       <TextField
+      className="w-full"
         fullWidth
         id="standard-bare"
         variant="outlined"
-        placeholder="How can we help"
+        placeholder="Search Users"
         InputProps={{
           endAdornment: (
             <IconButton>
@@ -82,6 +84,7 @@ function MyChats() {
           ),
         }}
       />
+      </div>
       <Box
         display="flex"
         flexDirection="column"
@@ -91,6 +94,7 @@ function MyChats() {
         height="100%"
         borderRadius="lg"
         overflowY="hidden"
+        className='z-10'
       >
         {Chats ? (
           <Stack overflowY="scroll">
@@ -133,3 +137,5 @@ function MyChats() {
 }
 
 export default MyChats;
+
+

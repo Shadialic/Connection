@@ -8,7 +8,7 @@ export async function UserData(userData, image) {
     formData.append("email", userData.email);
     formData.append("password", userData.password);
     formData.append("image", image);
-    console.log(userData, "0303030");
+   
     const response = await UserApi.post("/Signup", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -21,6 +21,17 @@ export async function UserData(userData, image) {
     throw err;
   }
 }
+export async function otpVerification(digits) {
+  try {
+    const response = await UserApi.post("/otp", digits);
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Error in UserData:", err);
+    throw err;
+  }
+}
+
 
 export async function LoginData(userData) {
   try {
@@ -34,7 +45,7 @@ export async function LoginData(userData) {
 }
 export async function LoadUser(userId) {
   try {
-    const response = await UserApi.post("/chat", userId, {
+    const response = await UserApi.post("/chat/users", userId, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -46,10 +57,31 @@ export async function LoadUser(userId) {
     throw err;
   }
 }
+export async function SearchUsers(searchQuery) {
+  console.log(searchQuery,'searchQuery');
+  try {
+    const response = await UserApi.get(`/searchUsers?search=${encodeURIComponent(searchQuery)}`);
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Error in UserData:", err);
+    throw err;
+  }
+}
 
 export async function fetchingChats(userId) {
     try {
       const response = await UserApi.get("/chat");
+      console.log(response.data);
+      return response.data;
+    } catch (err) {
+      console.error("Error in UserData:", err);
+      throw err;
+    }
+  }
+  export async function CreateGroup(data) {
+    try {
+      const response = await UserApi.post("/group",data);
       console.log(response.data);
       return response.data;
     } catch (err) {

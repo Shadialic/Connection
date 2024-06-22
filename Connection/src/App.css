@@ -4,3 +4,6 @@
     min-height: 100vp;
     display: flex;
 }
+.hidescroll::-webkit-scrollbar {
+    display:none;
+  }

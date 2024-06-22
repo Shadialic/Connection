@@ -12,49 +12,49 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import ChatLoading from "./ChatLoading";
-import { LoadUser } from "../../api/UserApi";
+import { LoadUser, SearchUsers } from "../../api/UserApi";
 import { useChatState } from "../../context/ChatProvider";
+import toast, { Toaster } from "react-hot-toast";
+import { Avatar } from "@mui/material";
 
 function SideDrawer({ toggleDrawer }) {
-  const users = [
-    { id: 1, name: "User One" },
-    { id: 2, name: "User Two" },
-    { id: 3, name: "User Three" },
-  ];
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState(users);
   const [loading, setLoading] = useState(false);
-  const {selectedChat,setSelectedChat,Chats,setChats}=useChatState()
+  const { selectedChat, setSelectedChat, Chats, setChats } = useChatState();
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
-  const handleSearchClick = () => {
+  const handleSearchClick = async () => {
+    if (!searchQuery) {
+      toast("Please Enter something in search");
+    }
+    const response = await SearchUsers(searchQuery);
+    console.log(response, "response");
+
     setLoading(true);
     setTimeout(() => {
-      const results = users.filter((user) =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setSearchResults(results);
+      setSearchResults(response);
       setLoading(false);
-    }, 1000); 
+    }, 1000);
   };
 
-  const accessChat=async(userid)=>{
-    try{
+  const accessChat = async (userid) => {
+    try {
       setLoading(true);
-      const response=await LoadUser(userid)
-      if(!Chats.find((c)=>c.id===response.id)){
-        setChats([response,...Chats])
+      const response = await LoadUser(userid);
+      if (!Chats.find((c) => c.id === response.id)) {
+        setChats([response, ...Chats]);
       }
-      setSelectedChat(response)
+      setSelectedChat(response);
       setLoading(false);
-
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   const list = () => (
     <Box sx={{ width: 250 }} role="presentation">
@@ -84,15 +84,25 @@ function SideDrawer({ toggleDrawer }) {
           {searchResults.map((user) => (
             <ListItem key={user.id} disablePadding>
               <ListItemButton onClick={() => accessChat(user.id)}>
-                <ListItemIcon>
-                  <AccountCircleIcon />
-                </ListItemIcon>
-                <ListItemText primary={user.name} />
+                {user.picture ? (
+                  <Avatar
+                    alt="Remy Sharp"
+                    src={user.picture}
+                    sx={{  width: 46, height: 46}}
+                  />
+                ) : (
+                  <ListItemIcon>
+                    <AccountCircleIcon />
+                  </ListItemIcon>
+                )}
+
+                <ListItemText primary={user.userName} p={4}/>
               </ListItemButton>
             </ListItem>
           ))}
         </List>
       )}
+      <Toaster />
     </Box>
   );
 

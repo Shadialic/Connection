@@ -7,6 +7,8 @@ import { useChatState } from "../../context/ChatProvider";
 import { TextField, Avatar, List, ListItem, ListItemAvatar, ListItemText, IconButton, Checkbox } from "@mui/material";
 import { FormControl } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { CreateGroup } from "../../api/UserApi";
+import toast, { Toaster } from "react-hot-toast";
 
 function GroupchatModal({ open, handleClose }) {
   const [groupName, setGroupName] = React.useState("");
@@ -49,23 +51,32 @@ function GroupchatModal({ open, handleClose }) {
     setSelectedUsers(selectedUsers.filter((u) => u !== user));
   };
 
-  const handleSubmit = () => {
-    // Handle form submission, e.g., send data to the backend
-    const formData = new FormData();
-    formData.append("groupName", groupName);
-    formData.append("selectedUsers", JSON.stringify(selectedUsers));
-    formData.append("groupImage", groupImage);
+  const handleSubmit =async () => {
+    if (!groupName || !groupImage || selectedUsers.length === 0) {
+      toast.error("Please fill all the fields");
+    } else if (selectedUsers.length < 2) {
+      toast.error("Add at least two members");
+    } else {
+      const formData = new FormData();
+      formData.append("groupName", groupName);
+      formData.append("selectedUsers", JSON.stringify(selectedUsers));
+      formData.append("groupImage", groupImage);
 
-    // Here you would typically make an API call to create the group chat
-    // Example: await api.createGroupChat(formData);
+   const response=await CreateGroup(formData)
+   setChats([response,...Chats])
+   toast('New Group Chat Created!')
+   
+      // Here you would typically make an API call to create the group chat
+      // Example: await api.createGroupChat(formData);
 
-    console.log("Group Chat Created:", {
-      groupName,
-      selectedUsers,
-      groupImage,
-    });
+      console.log("Group Chat Created:", {
+        groupName,
+        selectedUsers,
+        groupImage,
+      });
 
-    handleClose();
+      handleClose();
+    }
   };
 
   const style = {
@@ -93,7 +104,7 @@ function GroupchatModal({ open, handleClose }) {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style} overflow={scroll}>
+      <Box sx={{ ...style, overflow: "auto" }}>
         <Typography variant="h5" className="font-prompt-semibold text-black text-center text-2xl mb-4">
           Create Group Chat
         </Typography>
@@ -151,7 +162,7 @@ function GroupchatModal({ open, handleClose }) {
             <Box display="flex" flexWrap="wrap">
               {selectedUsers.map((user) => (
                 <Box key={user.id} display="flex" alignItems="center" m={1} p={1} bgcolor="#8c2bb9" borderRadius="8px">
-                  {/* <Avatar src={user.avatar} /> */}
+                  <Avatar src={user.avatar} />
                   <Typography variant="body2" color="white" ml={1}>{user.name}</Typography>
                   <IconButton onClick={() => handleUserRemove(user)} size="small">
                     <CloseIcon fontSize="small" />
@@ -170,6 +181,7 @@ function GroupchatModal({ open, handleClose }) {
             Create Group
           </Button>
         </FormControl>
+      <Toaster/>
       </Box>
     </Modal>
   );

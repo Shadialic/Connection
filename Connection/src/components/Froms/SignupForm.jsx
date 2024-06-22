@@ -44,7 +44,7 @@ function SignupForm() {
       image
     );
     toast(userData.message);
-     navigate("/login");
+     navigate("/otp");
   };
 
   return (
