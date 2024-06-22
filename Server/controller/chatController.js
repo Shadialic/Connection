@@ -1,7 +1,10 @@
 import ChatDb from "../model/chatModel.js";
 import User from "../model/userModel.js";
 import Message from "../model/messageModel.js";
+
+
 const accessChat = async (req, res) => {
+  console.log('-3-3-3');
   const { userId } = req.body;
   if (!userId) {
     console.log("UserId param not sent with request");
@@ -169,7 +172,7 @@ const createGroupChat = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-const renameGroup = asyncHandler(async (req, res) => {
+const renameGroup = async (req, res) => {
   const { chatId, chatName } = req.body;
 
   try {
@@ -209,8 +212,8 @@ const renameGroup = asyncHandler(async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
-const addToGroup = asyncHandler(async (req, res) => {
+};
+const addToGroup =async (req, res) => {
   const { chatId, userId } = req.body;
 
   try {
@@ -268,8 +271,8 @@ const addToGroup = asyncHandler(async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
-const removeFromGroup = asyncHandler(async (req, res) => {
+}
+const removeFromGroup = async (req, res) => {
   const { chatId, userId } = req.body;
 
   try {
@@ -327,7 +330,7 @@ const removeFromGroup = asyncHandler(async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
+};
 export {
   accessChat,
   fetchChats,

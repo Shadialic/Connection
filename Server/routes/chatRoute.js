@@ -9,7 +9,7 @@ import {
 } from "../controller/chatController.js";
 const chatRouter = Router();
 
-chatRouter.post("/", accessChat);
+chatRouter.post("/chat/users", accessChat);
 chatRouter.get("/", fetchChats);
 chatRouter.post("/group", createGroupChat);
 chatRouter.put("/rename", renameGroup);

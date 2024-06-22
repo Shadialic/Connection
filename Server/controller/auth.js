@@ -1,6 +1,7 @@
 import UserDb from "../model/userModel.js";
 import bcrypt from "bcryptjs";
-import { createSecretToken } from "../utils/Jwt/secretoken.js";
+import { createSecretToken } from "../utils/Jwt/secretoken..js";
+import { Sequelize } from "sequelize";
 
 // const LoadUser = async (req, res) => {
 //     try {
@@ -31,7 +32,7 @@ const postUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const image = req.file ? req.file.filename : null;
     const newUser = await UserDb.create({
-      username: userName,
+      userName: userName,
       email: email,
       password: hashedPassword,
       picture: image || undefined,
@@ -49,15 +50,22 @@ const postUser = async (req, res) => {
 const LoadUser = async (req, res) => {
   try {
     console.log(req.body);
+    const k= await UserDb.findAll();
+    console.log(k,'ss');
     const { email, password } = req.body.formData;
     const exist = await UserDb.findOne({
       where: { email },
     });
     if (exist) {
       if (password && exist.password) {
-        const compared = await bcrypt.compare(password,exist.password);
+        const compared = await bcrypt.compare(password, exist.password);
         if (compared) {
-          const token = createSecretToken(exist.id, exist.userName, exist.email); 
+          const token = createSecretToken(
+            exist.id,
+            exist.userName,
+            exist.email,
+            exist.picture
+          );
           res.status(200).json({
             userData: exist,
             status: true,
@@ -79,20 +87,33 @@ const LoadUser = async (req, res) => {
   }
 };
 
-const getAllUsers=async (req,res)=>{
-  try{
-    const keyword=req.quary.search?{
-      $or:[
-        {userName:{$regex:req.quary.search,$options:"i"}},
-        {email:{$regex:req.quary.search,$options:"i"}},
-      ]
-    }:{};
-    // const user=(await UserDb.findAll(keyword)).find({id:{$ne:req.}})
+const getAllUsers = async (req, res) => {
+  try {
+    console.log(req.userId,'req.userId');
+    const searchQuery = req.query.search;
+    const whereClause = searchQuery
+      ? {
+          [Sequelize.Op.or]: [
+            { userName: { [Sequelize.Op.iLike]: `%${searchQuery}%` } },
+            { email: { [Sequelize.Op.iLike]: `%${searchQuery}%` } },
+          ],
+          id: { [Sequelize.Op.ne]: req.userId },
+        }
+      : {
+          id: { [Sequelize.Op.ne]: req.userId},
+        };
+console.log(whereClause,'whereClause');
+    const users = await UserDb.findAll({
+      where: whereClause,
+    });
+    console.log(users,'userrr');
 
-  }catch(err){
-    console.log(err);
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
   }
-}
+};
 
 // Export the functions
-export { postUser,LoadUser,getAllUsers };
+export { postUser, LoadUser, getAllUsers };

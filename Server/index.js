@@ -2,20 +2,20 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import sequelize from './model/sequelize.js';
+import './model/associations.js'
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import userRouter from './routes/userRoute.js';
 import chatRouter from './routes/chatRoute.js';
-
+import decodeTokenMiddleware from './middleware/authMiddleware.js';
 dotenv.config();
 
 const app = express();
 
-// Get the current file URL and directory name
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+app.use(decodeTokenMiddleware);
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
@@ -40,6 +40,7 @@ sequelize.sync()
 
 app.use('/', userRouter);
 app.use('/chat', chatRouter);
+
 
 
 // Start the server

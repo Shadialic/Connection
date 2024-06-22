@@ -31,12 +31,12 @@ const Chat = sequelize.define('Chat', {
     timestamps:true
 });
 
-// Associations
-Chat.belongsToMany(User, { through: 'ChatUsers', as: 'users' }); // Many-to-Many relationship with User
-User.belongsToMany(Chat, { through: 'ChatUsers', as: 'chats' });
+// // Associations
+// Chat.belongsToMany(User, { through: 'ChatUsers', as: 'users' }); // Many-to-Many relationship with User
+// User.belongsToMany(Chat, { through: 'ChatUsers', as: 'chats' });
 
-Chat.belongsTo(User, { as: 'admin', foreignKey: 'adminId' }); // Admin reference
-Chat.belongsTo(Message, { as: 'latestMessage', foreignKey: 'latestMessageId' });
-Message.hasOne(Chat, { foreignKey: 'latestMessageId' });
+// Chat.belongsTo(User, { as: 'admin', foreignKey: 'adminId' }); // Admin reference
+// Chat.belongsTo(Message, { as: 'latestMessage', foreignKey: 'latestMessageId' });
+// Message.hasOne(Chat, { foreignKey: 'latestMessageId' });
 
 export default Chat;
