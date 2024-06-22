@@ -15,6 +15,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  is_Active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
   picture:{
     type:DataTypes.STRING,
     defaultValue:"https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
