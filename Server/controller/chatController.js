@@ -1,28 +1,29 @@
-import ChatDb from "../model/chatModel.js";
-import User from "../model/userModel.js";
+import Chat from "../model/chatModel.js";
 import Message from "../model/messageModel.js";
-
+import User from "../model/userModel.js";
 
 const accessChat = async (req, res) => {
-  console.log('-3-3-3');
   const { userId } = req.body;
+  console.log(userId, 'userId');
+
   if (!userId) {
     console.log("UserId param not sent with request");
     return res.status(400).json({ message: "userId not exist" });
   }
+
   try {
-    const currentUserId = req.user.id;
-    let isChat = await ChatDb.findOne({
+    const currentUserId = req.userId;
+    console.log(currentUserId, "UscurrentUserId");
+
+    let isChat = await Chat.findOne({
       where: {
         isGroupChat: false,
       },
       include: [
         {
           model: User,
-          as: "ChatUsers",
-          through: {
-            attributes: [],
-          },
+          as: "admin",
+          attributes: ["id", "userName", "email"],
           where: {
             id: currentUserId,
           },
@@ -30,10 +31,9 @@ const accessChat = async (req, res) => {
         },
         {
           model: User,
-          as: "ChatUsers",
-          through: {
-            attributes: [],
-          },
+          as: "participants",
+          attributes: ["id", "userName", "email"],
+          through: { attributes: [] },
           where: {
             id: userId,
           },
@@ -41,7 +41,7 @@ const accessChat = async (req, res) => {
         },
       ],
     });
-    console.log(isChat, "isChat");
+    console.log(isChat, 'isChat');
 
     if (isChat) {
       return res.json(isChat);
@@ -51,113 +51,111 @@ const accessChat = async (req, res) => {
         isGroupChat: false,
         adminId: currentUserId,
       };
-      console.log(chatData, "chatData");
 
-      const createdChat = await ChatDb.create(chatData);
-      await createdChat.addUsers([currentUserId, userId]);
+      const createdChat = await Chat.create(chatData);
+      await createdChat.addParticipants([currentUserId, userId]);
+      console.log(createdChat,'createdChat');
 
-      const fullChat = await ChatDb.findOne({
+      const fullChat = await Chat.findOne({
         where: { id: createdChat.id },
         include: [
           {
             model: User,
-            as: "ChatUsers",
-            attributes: { exclude: ["password"] },
+            as: "participants",
+            attributes: ["id", "userName", "email"],
             through: { attributes: [] },
           },
         ],
       });
-      console.log(fullChat, "fullchat");
+      console.log(fullChat, 'fullChat');
+
       return res.status(200).json(fullChat);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ message: "Server error" });
   }
 };
-
 const fetchChats = async (req, res) => {
   try {
-    const currentUserId = req.user.id;
+    console.log('ddddddddddddddddd');
+    const currentUserId = req.userId; // Assuming req.user contains the authenticated user's information
 
-    let chats = await ChatDb.findAll({
+    let chats = await Chat.findAll({
       include: [
         {
           model: User,
-          as: "users",
+          as: "admin",
           attributes: { exclude: ["password"] },
-          through: { attributes: [] },
           where: {
             id: currentUserId,
           },
         },
         {
           model: User,
-          as: "admin",
+          as: "participants",
           attributes: { exclude: ["password"] },
         },
-        {
-          model: Message,
-          as: "latestMessage",
-          include: [
-            {
-              model: User,
-              as: "sender",
-              attributes: ["name", "pic", "email"],
-            },
-          ],
-        },
+        // Uncomment and adjust the following if you want to include the latest message
+        // {
+        //   model: Message,
+        //   as: "latestMessage",
+        //   include: [
+        //     {
+        //       model: User,
+        //       as: "sender",
+        //       attributes: ["name", "pic", "email"],
+        //     },
+        //   ],
+        // },
       ],
       order: [["updatedAt", "DESC"]],
     });
 
     res.status(200).json(chats);
   } catch (error) {
+    console.error(error);
     res.status(400).json({ message: error.message });
   }
 };
 
 const createGroupChat = async (req, res) => {
-  if (!req.body.users || !req.body.name) {
-    return res.status(400).send({ message: "Please fill all the fields" });
-  }
+  console.log(req.body); // Ensure req.body is correctly received
 
   let users;
   try {
-    users = JSON.parse(req.body.users);
+    users = JSON.parse(req.body.users); // Parse the array of user IDs from req.body.users
   } catch (error) {
     return res.status(400).send({ message: "Invalid users format" });
   }
 
   if (users.length < 2) {
-    return res
-      .status(400)
-      .send("More than 2 users are required to form a group chat");
+    return res.status(400).send("More than 2 users are required to form a group chat");
   }
 
-  // Add the current user to the users array
-  users.push(req.user.id);
+  // Add the current user (admin) to the users array
+  users.push(req.userId);
 
   try {
     // Create the group chat
-    const groupChat = await ChatDb.create({
-      chatName: req.body.name,
+    const groupChat = await Chat.create({
+      chatName: req.body.groupName,
       isGroupChat: true,
-      adminId: req.user.id,
+      adminId: req.userId,
     });
 
-    // Add users to the chat
-    await groupChat.addUsers(users);
+    // Add users to the group chat using the addParticipants method
+    await groupChat.addParticipants(users);
 
-    // Retrieve the full group chat with users and admin populated
-    const fullGroupChat = await ChatDb.findOne({
+    // Retrieve the full group chat with participants and admin populated
+    const fullGroupChat = await Chat.findOne({
       where: { id: groupChat.id },
       include: [
         {
           model: User,
-          as: "users",
+          as: "participants",
           attributes: { exclude: ["password"] },
-          through: { attributes: [] },
+          through: { attributes: [] }, // Exclude timestamps from join table
         },
         {
           model: User,
@@ -167,17 +165,20 @@ const createGroupChat = async (req, res) => {
       ],
     });
 
-    res.status(200).json(fullGroupChat);
+    res.status(201).json(fullGroupChat); // Respond with the full group chat details
   } catch (error) {
+    console.log(error,'333333333333333333333333333333');
     res.status(400).json({ message: error.message });
   }
 };
+
+
 const renameGroup = async (req, res) => {
   const { chatId, chatName } = req.body;
 
   try {
     // Update the chat name
-    const [updated] = await ChatDb.update(
+    const [updated] = await Chat.update(
       { chatName: chatName },
       {
         where: { id: chatId },
@@ -196,7 +197,7 @@ const renameGroup = async (req, res) => {
       include: [
         {
           model: User,
-          as: "users",
+          as: "participants",
           attributes: { exclude: ["password"] },
           through: { attributes: [] },
         },
@@ -213,7 +214,7 @@ const renameGroup = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-const addToGroup =async (req, res) => {
+const addToGroup = async (req, res) => {
   const { chatId, userId } = req.body;
 
   try {
@@ -271,7 +272,7 @@ const addToGroup =async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-}
+};
 const removeFromGroup = async (req, res) => {
   const { chatId, userId } = req.body;
 

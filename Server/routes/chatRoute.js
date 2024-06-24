@@ -7,11 +7,15 @@ import {
   removeFromGroup,
   renameGroup,
 } from "../controller/chatController.js";
+import multer from 'multer';
+
+const upload = multer({ dest: 'uploads/' });
+
 const chatRouter = Router();
 
-chatRouter.post("/chat/users", accessChat);
+chatRouter.post("/users",accessChat);
 chatRouter.get("/", fetchChats);
-chatRouter.post("/group", createGroupChat);
+chatRouter.post("/group",upload.single('image'), createGroupChat);
 chatRouter.put("/rename", renameGroup);
 chatRouter.put("/groupremove", removeFromGroup);
 chatRouter.put("/groupadd", addToGroup);
