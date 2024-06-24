@@ -7,7 +7,7 @@ import { useChatState } from "../../context/ChatProvider";
 import { TextField, Avatar, List, ListItem, ListItemAvatar, ListItemText, IconButton, Checkbox } from "@mui/material";
 import { FormControl } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { CreateGroup } from "../../api/UserApi";
+import { CreateGroup, SearchUsers } from "../../api/UserApi";
 import toast, { Toaster } from "react-hot-toast";
 
 function GroupchatModal({ open, handleClose }) {
@@ -15,19 +15,20 @@ function GroupchatModal({ open, handleClose }) {
   const [selectedUsers, setSelectedUsers] = React.useState([]);
   const [search, setSearch] = React.useState("");
   const [searchResult, setSearchResult] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
   const [groupImage, setGroupImage] = React.useState(null);
-  const { selectedChat, setSelectedChat, Chats, setChats, user } = useChatState();
+  const { Chats, setChats, user } = useChatState();
 
   const handleGroupNameChange = (e) => {
     setGroupName(e.target.value);
   };
-
-  const handleSearchChange = (e) => {
+console.log('-=-=-=-',groupName,selectedUsers,groupImage);
+  const handleSearchChange = async (e) => {
     setSearch(e.target.value);
-    // Mock search result, in real case, you would fetch this from an API
-    if (e.target.value) {
-      setSearchResult(users);
+    const response = await SearchUsers(e.target.value);
+
+    if (response) {
+      const data = response.slice(0, 3);
+      setSearchResult(data);
     } else {
       setSearchResult([]);
     }
@@ -51,7 +52,9 @@ function GroupchatModal({ open, handleClose }) {
     setSelectedUsers(selectedUsers.filter((u) => u !== user));
   };
 
-  const handleSubmit =async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     if (!groupName || !groupImage || selectedUsers.length === 0) {
       toast.error("Please fill all the fields");
     } else if (selectedUsers.length < 2) {
@@ -61,20 +64,17 @@ function GroupchatModal({ open, handleClose }) {
       formData.append("groupName", groupName);
       formData.append("selectedUsers", JSON.stringify(selectedUsers));
       formData.append("groupImage", groupImage);
+      console.log(formData, 'formData');
 
-   const response=await CreateGroup(formData)
-   setChats([response,...Chats])
-   toast('New Group Chat Created!')
-   
-      // Here you would typically make an API call to create the group chat
-      // Example: await api.createGroupChat(formData);
-
-      console.log("Group Chat Created:", {
-        groupName,
-        selectedUsers,
-        groupImage,
-      });
-
+      const response = await CreateGroup( {
+        groupName: groupName,
+        users: JSON.stringify(selectedUsers.map((u) => u.id)),
+      },groupImage);
+      console.log(response,'wwwwwwwwwwwwwwww');
+      setChats([response, ...Chats]);
+      toast.success('New Group Chat Created!');
+      setGroupName('')
+      setSelectedUsers([])
       handleClose();
     }
   };
@@ -89,13 +89,9 @@ function GroupchatModal({ open, handleClose }) {
     border: "2px solid #000",
     boxShadow: 24,
     p: 4,
+    maxHeight: '90vh',
+    overflow: 'auto'
   };
-
-  const users = [
-    { id: 1, name: "User One", avatar: "https://via.placeholder.com/150" },
-    { id: 2, name: "User Two", avatar: "https://via.placeholder.com/150" },
-    { id: 3, name: "User Three", avatar: "https://via.placeholder.com/150" },
-  ];
 
   return (
     <Modal
@@ -104,7 +100,7 @@ function GroupchatModal({ open, handleClose }) {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={{ ...style, overflow: "auto" }}>
+      <Box sx={style}>
         <Typography variant="h5" className="font-prompt-semibold text-black text-center text-2xl mb-4">
           Create Group Chat
         </Typography>
@@ -133,11 +129,16 @@ function GroupchatModal({ open, handleClose }) {
                 <ListItemAvatar>
                   <Avatar src={user.avatar} />
                 </ListItemAvatar>
-                <ListItemText primary={user.name} />
-                <Checkbox
-                  edge="end"
-                  checked={selectedUsers.includes(user)}
-                />
+                <div className="flex flex-1 items-center justify-between">
+                  <div className="flex flex-col">
+                    <ListItemText primary={user.userName} />
+                    <ListItemText primary={user.email} className="text-sm" />
+                  </div>
+                  <Checkbox
+                    edge="end"
+                    checked={selectedUsers.includes(user)}
+                  />
+                </div>
               </ListItem>
             ))}
           </List>
@@ -163,7 +164,7 @@ function GroupchatModal({ open, handleClose }) {
               {selectedUsers.map((user) => (
                 <Box key={user.id} display="flex" alignItems="center" m={1} p={1} bgcolor="#8c2bb9" borderRadius="8px">
                   <Avatar src={user.avatar} />
-                  <Typography variant="body2" color="white" ml={1}>{user.name}</Typography>
+                  <Typography variant="body2" color="white" ml={1}>{user.userName}</Typography>
                   <IconButton onClick={() => handleUserRemove(user)} size="small">
                     <CloseIcon fontSize="small" />
                   </IconButton>
@@ -181,7 +182,7 @@ function GroupchatModal({ open, handleClose }) {
             Create Group
           </Button>
         </FormControl>
-      <Toaster/>
+        <Toaster />
       </Box>
     </Modal>
   );

@@ -6,7 +6,7 @@ import ChatBox from "../../../components/Chatpage/ChatBox";
 
 function ChatPage() {
   const { user } = useChatState();
-  const [fetchAgain, setFetchAgain] = useState();
+  const [fetchAgain, setFetchAgain] = useState(false);
   return (
     <div className="flex w-svw h-svh">
       <div className="w-fit h-full">

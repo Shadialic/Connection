@@ -20,7 +20,7 @@ import { Avatar } from "@mui/material";
 function SideDrawer({ toggleDrawer }) {
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState(users);
+  const [searchResults, setSearchResults] = useState();
   const [loading, setLoading] = useState(false);
   const { selectedChat, setSelectedChat, Chats, setChats } = useChatState();
 
@@ -44,8 +44,10 @@ function SideDrawer({ toggleDrawer }) {
 
   const accessChat = async (userid) => {
     try {
+      console.log(userid,'userid');
       setLoading(true);
       const response = await LoadUser(userid);
+      console.log(response,"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
       if (!Chats.find((c) => c.id === response.id)) {
         setChats([response, ...Chats]);
       }
@@ -81,7 +83,7 @@ function SideDrawer({ toggleDrawer }) {
         <ChatLoading />
       ) : (
         <List>
-          {searchResults.map((user) => (
+          {searchResults&&searchResults.map((user) => (
             <ListItem key={user.id} disablePadding>
               <ListItemButton onClick={() => accessChat(user.id)}>
                 {user.picture ? (

@@ -1,5 +1,8 @@
 import React, { useRef, useState } from "react";
 import { otpVerification } from "../../api/UserApi";
+import toast, { Toaster } from "react-hot-toast";
+import { useLocation, useNavigate } from "react-router-dom";
+
 
 const otpCss = {
   width: "40px",
@@ -10,6 +13,10 @@ const otpCss = {
 };
 
 const Otp = ({ length = 6 }) => {
+  const navigate=useNavigate()
+  const location=useLocation()
+  const userData=location.state;
+  console.log(userData,"location");
   const inputRef = useRef([]);
   const [value, setValue] = useState(new Array(length).fill(""));
 
@@ -38,8 +45,13 @@ const Otp = ({ length = 6 }) => {
   const handleSubmit = async(e) => {
     e.preventDefault();
     const finalValue = value.join("");
-    const response=await otpVerification(finalValue)
+    const response=await otpVerification({finalValue,userData})
+    toast(response.message)
     console.log(response, 'response');
+    if(response.success){
+      navigate('/login')
+
+    }
     // Perform the submit action here
   };
 
@@ -122,6 +134,7 @@ const Otp = ({ length = 6 }) => {
           </form>
         </div>
       </div>
+      <Toaster/>
     </div>
   );
 };

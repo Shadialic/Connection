@@ -57,7 +57,7 @@ function NavBar() {
 
         {" "}
         {/* Centering the content with mx-auto */}
-        <div className="h-14 bg-blue-gray-300 flex justify-between items-center px-4">
+        <div className="h-16  shadow-md flex justify-between items-center px-4">
           {" "}
           {/* Added px-4 for padding */}
           <h1 className="font-prompt-semibold text-black text-2xl">
