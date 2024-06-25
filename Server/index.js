@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import userRouter from './routes/userRoute.js';
 import chatRouter from './routes/chatRoute.js';
 import decodeTokenMiddleware from './middleware/authMiddleware.js';
+import messageRouter from './routes/messageRoute.js';
 dotenv.config();
 
 const app = express();
@@ -40,6 +41,8 @@ sequelize.sync()
 
 app.use('/', userRouter);
 app.use('/chat', chatRouter);
+app.use('/messages',messageRouter);
+
 
 
 

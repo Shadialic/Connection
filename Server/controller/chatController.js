@@ -79,7 +79,7 @@ const accessChat = async (req, res) => {
 const fetchChats = async (req, res) => {
   try {
     console.log("ddddddddddddddddd");
-    const currentUserId = req.userId; // Assuming req.user contains the authenticated user's information
+    const currentUserId = req.userId; 
 
     let chats = await Chat.findAll({
       include: [
@@ -279,16 +279,17 @@ const addToGroup = async (req, res) => {
   }
 };
 const removeFromGroup = async (req, res) => {
-  const { chatId, userId } = req.body;
+  console.log(req.body, 'req');
+  const { ChatId, userId } = req.body;
 
   try {
     // Find the chat to ensure it exists and include users to check if the requester is admin
     const chat = await Chat.findOne({
-      where: { id: chatId },
+      where: { id: ChatId },
       include: [
         {
           model: User,
-          as: "ChatUsers",
+          as: "participants",
           attributes: ["id"],
           through: { attributes: [] },
         },
@@ -299,28 +300,29 @@ const removeFromGroup = async (req, res) => {
         },
       ],
     });
+    console.log(chat, 'chat');
 
     if (!chat) {
       return res.status(404).json({ message: "Chat Not Found" });
     }
-
-    // Check if the requester is the admin
-    if (chat.adminId !== req.user.id) {
-      return res
-        .status(403)
-        .json({ message: "Only admins can remove users from the group" });
+    if (!chat.admin || chat.admin.id !== req.userId) {
+      return res.status(403).json({ message: "Only admins can remove users from the group" });
     }
 
-    // Remove the user from the group
-    await chat.removeChatUser(userId);
+    const chatUser = chat.participants.find(user => user.id === userId);
+    if (!chatUser) {
+      return res.status(404).json({ message: "User Not Found in the Chat" });
+    }
 
-    // Fetch the updated chat with related users and admin
+    
+    await chat.removeParticipant(userId);  
+
     const updatedChat = await Chat.findOne({
-      where: { id: chatId },
+      where: { id: ChatId },
       include: [
         {
           model: User,
-          as: "ChatUsers",
+          as: "participants",
           attributes: { exclude: ["password"] },
           through: { attributes: [] },
         },
@@ -334,9 +336,12 @@ const removeFromGroup = async (req, res) => {
 
     res.json(updatedChat);
   } catch (error) {
+    console.error(error); 
     res.status(400).json({ message: error.message });
   }
 };
+
+
 export {
   accessChat,
   fetchChats,

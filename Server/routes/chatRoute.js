@@ -17,7 +17,7 @@ chatRouter.post("/users",accessChat);
 chatRouter.get("/", fetchChats);
 chatRouter.post("/group",upload.single('image'), createGroupChat);
 chatRouter.put("/rename", renameGroup);
-chatRouter.put("/groupremove", removeFromGroup);
+chatRouter.put("/groupremove",removeFromGroup);
 chatRouter.put("/groupadd", addToGroup);
 
 export default chatRouter;
