@@ -4,7 +4,7 @@ import User from "../model/userModel.js";
 
 const accessChat = async (req, res) => {
   const { userId } = req.body;
-  console.log(userId, 'userId');
+  console.log(userId, "userId");
 
   if (!userId) {
     console.log("UserId param not sent with request");
@@ -41,7 +41,7 @@ const accessChat = async (req, res) => {
         },
       ],
     });
-    console.log(isChat, 'isChat');
+    console.log(isChat, "isChat");
 
     if (isChat) {
       return res.json(isChat);
@@ -54,7 +54,7 @@ const accessChat = async (req, res) => {
 
       const createdChat = await Chat.create(chatData);
       await createdChat.addParticipants([currentUserId, userId]);
-      console.log(createdChat,'createdChat');
+      console.log(createdChat, "createdChat");
 
       const fullChat = await Chat.findOne({
         where: { id: createdChat.id },
@@ -67,7 +67,7 @@ const accessChat = async (req, res) => {
           },
         ],
       });
-      console.log(fullChat, 'fullChat');
+      console.log(fullChat, "fullChat");
 
       return res.status(200).json(fullChat);
     }
@@ -78,7 +78,7 @@ const accessChat = async (req, res) => {
 };
 const fetchChats = async (req, res) => {
   try {
-    console.log('ddddddddddddddddd');
+    console.log("ddddddddddddddddd");
     const currentUserId = req.userId; // Assuming req.user contains the authenticated user's information
 
     let chats = await Chat.findAll({
@@ -130,7 +130,9 @@ const createGroupChat = async (req, res) => {
   }
 
   if (users.length < 2) {
-    return res.status(400).send("More than 2 users are required to form a group chat");
+    return res
+      .status(400)
+      .send("More than 2 users are required to form a group chat");
   }
 
   // Add the current user (admin) to the users array
@@ -167,33 +169,34 @@ const createGroupChat = async (req, res) => {
 
     res.status(201).json(fullGroupChat); // Respond with the full group chat details
   } catch (error) {
-    console.log(error,'333333333333333333333333333333');
+    console.log(error, "333333333333333333333333333333");
     res.status(400).json({ message: error.message });
   }
 };
 
-
 const renameGroup = async (req, res) => {
-  const { chatId, chatName } = req.body;
+  console.log(req.body, "req.body");
+  const { ChatId, chatName } = req.body;
 
   try {
     // Update the chat name
-    const [updated] = await Chat.update(
+    const updated = await Chat.update(
       { chatName: chatName },
       {
-        where: { id: chatId },
+        where: { id: ChatId },
         returning: true,
         plain: true,
       }
     );
+    console.log(updated, "updated");
 
     if (updated === 0) {
-      return res.status(404).json({ message: "Chat Not Found" });
+      return res.json({ message: "Chat Not Found" });
     }
 
     // Fetch the updated chat with related users and admin
     const updatedChat = await Chat.findOne({
-      where: { id: chatId },
+      where: { id: ChatId },
       include: [
         {
           model: User,
@@ -208,23 +211,25 @@ const renameGroup = async (req, res) => {
         },
       ],
     });
-
+    console.log(updatedChat, "updatedChat");
     res.json(updatedChat);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 };
 const addToGroup = async (req, res) => {
-  const { chatId, userId } = req.body;
+  const { ChatId, userId } = req.body;
+  console.log(req.body,'req.body');
 
   try {
     // Find the chat to ensure it exists and include users to check if the requester is admin
-    const chat = await ChatDb.findOne({
-      where: { id: chatId },
+    const chat = await Chat.findOne({
+      where: { id: ChatId },
       include: [
         {
           model: User,
-          as: "ChatUsers",
+          as: "participants",
           attributes: ["id"],
           through: { attributes: [] },
         },
@@ -236,27 +241,27 @@ const addToGroup = async (req, res) => {
       ],
     });
 
-    if (!chat) {
-      return res.status(404).json({ message: "Chat Not Found" });
+    if(!chat) {
+      return res.json({ message: "Chat Not Found" });
     }
 
     // Check if the requester is the admin
-    if (chat.adminId !== req.user.id) {
+    if(chat.adminId !== req.userId) {
       return res
         .status(403)
         .json({ message: "Only admins can add users to the group" });
     }
 
     // Add the user to the group
-    await chat.addChatUser(userId);
+    await chat.addParticipants(userId);
 
     // Fetch the updated chat with related users and admin
-    const updatedChat = await ChatDb.findOne({
-      where: { id: chatId },
+    const updatedChat = await Chat.findOne({
+      where: { id: ChatId },
       include: [
         {
           model: User,
-          as: "ChatUsers",
+          as: "participants",
           attributes: { exclude: ["password"] },
           through: { attributes: [] },
         },

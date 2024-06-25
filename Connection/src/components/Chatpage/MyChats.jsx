@@ -146,14 +146,14 @@ function MyChats({ fetchAgain }) {
                       : chat.chatName}
                   </Typography>
 
-                  {/* {chat.latestMessage && (
+                  {chat.latestMessage && (
                   <Typography fontSize="xs">
                     <b>{chat.latestMessage.sender.name} : </b>
                     {chat.latestMessage.content.length > 50
                       ? chat.latestMessage.content.substring(0, 51) + "..."
                       : chat.latestMessage.content}
                   </Typography>
-                )} */}
+                )}
                 </Box>
               ))}
           </div>
