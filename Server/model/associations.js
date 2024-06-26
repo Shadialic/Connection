@@ -1,21 +1,14 @@
-// import User from './userModel.js';
-// import Message from './messageModel.js';
-// import Chat from './chatModel.js';
+// associations.js
+import User from './userModel.js';
+import Chat from './chatModel.js';
+import Message from './messageModel.js';
 
-// // Define associations for Message
-// Message.belongsTo(User, { as: 'sender', foreignKey: 'senderId' });
-// Message.belongsTo(Chat, { as: 'chat', foreignKey: 'chatId' });
+Chat.belongsTo(User, { as: 'admin', foreignKey: 'adminId' });
+Chat.belongsTo(Message, { as: 'latestMessage', foreignKey: 'latestMessageId' });
+Chat.belongsToMany(User, { through: 'ChatUsers', as: 'participants', foreignKey: 'ChatId' });
+User.belongsToMany(Chat, { through: 'ChatUsers', as: 'chats', foreignKey: 'UserId' });
 
-// // Define associations for Chat
-// Chat.belongsToMany(User, { through: 'ChatUsers', as: 'participants' }); // Updated alias
-// User.belongsToMany(Chat, { through: 'ChatUsers', as: 'userChats' }); // Updated alias
+Message.belongsTo(User, { as: 'sender', foreignKey: 'senderId' });
+Message.belongsTo(Chat, { as: 'chat', foreignKey: 'chatId' });
 
-// Chat.belongsTo(User, { as: 'admin', foreignKey: 'adminId' });
-// Chat.belongsTo(Message, { as: 'latestMessage', foreignKey: 'latestMessageId' });
-
-// // Export models with associations
-// export {
-//   User,
-//   Message,
-//   Chat
-// };
+export { User, Chat, Message };

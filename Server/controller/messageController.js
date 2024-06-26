@@ -1,9 +1,8 @@
 import Chat from "../model/chatModel.js";
 import Message from "../model/messageModel.js";
 import User from "../model/userModel.js";
-
+import { Op } from 'sequelize';
 const sendMessae = async (req, res) => {
-  console.log(req.body, 'req.........');
   try {
     const { content, chatId } = req.body;
     if (!content || !chatId) {
@@ -18,7 +17,6 @@ const sendMessae = async (req, res) => {
       chatId: chatId,
     };
     const message = await Message.create(newMessage);
-    console.log(message.id, "messageee.................e");
 
     const newmessages = await Message.findOne({
       where: { id: message.id },
@@ -56,29 +54,54 @@ const sendMessae = async (req, res) => {
 const getAllMessages = async (req, res) => {
   try {
     const { chatId } = req.params;
-    console.log(chatId, "chatId");
+    const numericChatId = Number(chatId);
 
+
+    // Find the chat including participants
+    const chat = await Chat.findOne({
+      where: { id: chatId },
+      include: {
+        model: User,
+        as: 'participants',
+        attributes: ['id'],
+      },
+    });
+
+    if (!chat) {
+      return res.status(404).json({ message: 'Chat not found' });
+    }
+
+    const participantIds = chat.participants.map((participant) => participant.id);
+
+    // Find all messages for the chat and its participants
     const messages = await Message.findAll({
-      where: { chatId: chatId },
+      where: {
+        chatId: {
+          [Op.or]: participantIds.map((id) => ({
+            [Op.eq]: chatId, // chatId should match the current chat
+          })),
+        },
+      },
       include: [
         {
           model: User,
-          as: "sender",
-          attributes: { exclude: ["password"] },
+          as: 'sender',
+          attributes: { exclude: ['password'] },
         },
         {
           model: Chat,
-          as: "chat",
+          as: 'chat',
           include: [
             {
               model: User,
-              as: "participants",
-              attributes: { exclude: ["password"] },
-              through: { attributes: [] }, // Ensure you include this to exclude the join table attributes
+              as: 'participants',
+              attributes: { exclude: ['password'] },
+              through: { attributes: [] },
             },
           ],
         },
       ],
+      order: [['createdAt', 'ASC']],
     });
 
     res.json(messages);

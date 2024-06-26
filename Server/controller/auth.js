@@ -157,6 +157,7 @@ const LoadUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
+    console.log(req.userId,'req.userId');
     const searchQuery = req.query.search;
     const whereClause = searchQuery
       ? {

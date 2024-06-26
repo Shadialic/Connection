@@ -1,7 +1,6 @@
+// messageModel.js
 import { DataTypes } from 'sequelize';
 import sequelize from './sequelize.js';
-import User from './userModel.js';
-import Chat from './chatModel.js';
 
 const Message = sequelize.define('Message', {
   content: {
@@ -26,6 +25,4 @@ const Message = sequelize.define('Message', {
   timestamps: true
 });
 
-Message.belongsTo(User, { as: 'sender', foreignKey: 'senderId' });
-Message.belongsTo(Chat, { as: 'chat', foreignKey: 'chatId' });
 export default Message;

@@ -1,10 +1,10 @@
 import Chat from "../model/chatModel.js";
 import Message from "../model/messageModel.js";
 import User from "../model/userModel.js";
+import { Op } from 'sequelize';
 
 const accessChat = async (req, res) => {
   const { userId } = req.body;
-  console.log(userId, "userId");
 
   if (!userId) {
     console.log("UserId param not sent with request");
@@ -12,21 +12,16 @@ const accessChat = async (req, res) => {
   }
 
   try {
-    const currentUserId = req.userId;
-    console.log(currentUserId, "UscurrentUserId");
+    const currentUserId = req.userId; // Assuming req.userId is set by middleware/auth
 
     let isChat = await Chat.findOne({
-      where: {
-        isGroupChat: false,
-      },
+      where: { isGroupChat: false },
       include: [
         {
           model: User,
           as: "admin",
           attributes: ["id", "userName", "email"],
-          where: {
-            id: currentUserId,
-          },
+          where: { id: currentUserId },
           required: true,
         },
         {
@@ -34,14 +29,12 @@ const accessChat = async (req, res) => {
           as: "participants",
           attributes: ["id", "userName", "email"],
           through: { attributes: [] },
-          where: {
-            id: userId,
-          },
+          where: { id: userId },
           required: true,
         },
       ],
     });
-    console.log(isChat, "isChat");
+
 
     if (isChat) {
       return res.json(isChat);
@@ -50,11 +43,12 @@ const accessChat = async (req, res) => {
         chatName: "sender",
         isGroupChat: false,
         adminId: currentUserId,
+        users: [currentUserId, userId]
       };
 
       const createdChat = await Chat.create(chatData);
       await createdChat.addParticipants([currentUserId, userId]);
-      console.log(createdChat, "createdChat");
+      console.log(chatData, "chatData");
 
       const fullChat = await Chat.findOne({
         where: { id: createdChat.id },
@@ -67,7 +61,6 @@ const accessChat = async (req, res) => {
           },
         ],
       });
-      console.log(fullChat, "fullChat");
 
       return res.status(200).json(fullChat);
     }
@@ -78,39 +71,29 @@ const accessChat = async (req, res) => {
 };
 const fetchChats = async (req, res) => {
   try {
-    console.log("ddddddddddddddddd");
-    const currentUserId = req.userId; 
+    const currentUserId = req.userId;
 
     let chats = await Chat.findAll({
-      include: [
-        {
-          model: User,
-          as: "admin",
-          attributes: { exclude: ["password"] },
-          where: {
-            id: currentUserId,
-          },
+      where: {
+        users: {
+          [Op.contains]: [currentUserId], // Ensure currentUserId is in the users array
         },
-        {
-          model: User,
-          as: "participants",
-          attributes: { exclude: ["password"] },
-        },
-        // Uncomment and adjust the following if you want to include the latest message
-        // {
-        //   model: Message,
-        //   as: "latestMessage",
-        //   include: [
-        //     {
-        //       model: User,
-        //       as: "sender",
-        //       attributes: ["name", "pic", "email"],
-        //     },
-        //   ],
-        // },
-      ],
+      },
       order: [["updatedAt", "DESC"]],
     });
+
+    // Fetch user details for each chat
+    for (let chat of chats) {
+      const userIds = chat.users;
+      const users = await User.findAll({
+        where: {
+          id: userIds,
+        },
+        attributes: { exclude: ["password"] },
+      });
+
+      chat.dataValues.participants = users;
+    }
 
     res.status(200).json(chats);
   } catch (error) {
@@ -169,13 +152,11 @@ const createGroupChat = async (req, res) => {
 
     res.status(201).json(fullGroupChat); // Respond with the full group chat details
   } catch (error) {
-    console.log(error, "333333333333333333333333333333");
     res.status(400).json({ message: error.message });
   }
 };
 
 const renameGroup = async (req, res) => {
-  console.log(req.body, "req.body");
   const { ChatId, chatName } = req.body;
 
   try {

@@ -45,9 +45,45 @@ app.use('/messages',messageRouter);
 
 
 
-
-// Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+// Start the server
+import { Server } from 'socket.io'; // Correct import statement for socket.io
+
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: process.env.URL,
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+  socket.on("setup",(userData)=>{
+    socket.join(userData.id)
+    console.log(userData.id,'userData.id');
+    socket.emit("coneected")
+  })
+  socket.on('join chat', (room) => {
+    socket.join(room);
+    console.log(`Socket ${socket.id} joined room ${room}`);
+  });
+  socket.on("new message", (newMessageRecieved) => {
+    let chat=newMessageRecieved.chat
+    console.log(`Socket ${socket.id} joined room ${chat}`);
+
+    if( !chat.users){
+     return  console.log('not definded');
+    }
+    chat.users.forEach(user => {
+      if(user.id==newMessageRecieved.sender.id)return;
+      socket.in(user.id).emit("message recieved",newMessageRecieved)
+      
+    });
+   
+  });
+
+
 });

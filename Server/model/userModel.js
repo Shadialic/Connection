@@ -1,3 +1,4 @@
+// userModel.js
 import { DataTypes } from 'sequelize';
 import sequelize from './sequelize.js';
 
@@ -19,9 +20,9 @@ const User = sequelize.define('User', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
-  picture:{
-    type:DataTypes.STRING,
-    defaultValue:"https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+  picture: {
+    type: DataTypes.STRING,
+    defaultValue: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
   }
 });
 
