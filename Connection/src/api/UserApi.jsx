@@ -66,12 +66,11 @@ export async function LoadUser(userId) {
   }
 }
 export async function SearchUsers(searchQuery) {
-  console.log(searchQuery, "searchQuery");
   try {
     const response = await UserApi.get(
       `/searchUsers?search=${encodeURIComponent(searchQuery)}`
     );
-    console.log(response.data);
+ 
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -82,7 +81,6 @@ export async function SearchUsers(searchQuery) {
 export async function fetchingChats() {
   try {
     const response = await UserApi.get("/chat");
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -114,7 +112,6 @@ export async function renameGroup(data) {
   }
 }
 export async function groupAdd(data) {
-  console.log(data,'-3-3-3-3');
   try {
     const response = await UserApi.put("/chat/groupadd",data);
     console.log(response.data);
@@ -125,7 +122,6 @@ export async function groupAdd(data) {
   }
 }
 export async function removeParticipant(data) {
-  console.log(data,'-3-3-3-3');
   try {
     const response = await UserApi.put("/chat/groupremove",data);
     console.log(response.data);
@@ -137,7 +133,6 @@ export async function removeParticipant(data) {
 }
 
 export async function sendNewMessage(data) {
-  console.log(data,'-3-3-3-3');
   try {
     const response = await UserApi.post("/messages/",data);
     console.log(response.data);
@@ -148,7 +143,6 @@ export async function sendNewMessage(data) {
   }
 }
 export async function getAllMessages(chatId) {
-  console.log(chatId,'-3-3-3-3');
   try {
     const response = await UserApi.get(`/messages/${chatId}`);
     console.log(response.data);

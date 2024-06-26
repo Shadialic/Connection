@@ -7,22 +7,38 @@ import Profile from "../modals/Profile";
 import UpdateGroupChatModal from "../modals/UpdateGroupChatModal";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import CircularProgress from "@mui/material/CircularProgress";
-import Fab from '@mui/material/Fab';
-import SendIcon from '@mui/icons-material/Send';
-import TextField from '@mui/material/TextField';
+import Fab from "@mui/material/Fab";
+import SendIcon from "@mui/icons-material/Send";
+import TextField from "@mui/material/TextField";
 import { getAllMessages, sendNewMessage } from "../../api/UserApi";
 import ScrollableChat from "./ScrollableChat";
-
+import io from "socket.io-client";
 function SingleChat({ fetchAgain, setFetchAgain }) {
   const { user, selectedChat, setSelectedChat } = useChatState();
   const [openProfile, setOpenProfile] = React.useState(false);
-  const [newMessage, setNewMesages] = useState("");
+  const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [socket, setSocket] = useState(null);
+  useEffect(() => {
+    const newSocket = io("http://localhost:3000");
+    setSocket(newSocket);
 
-  const handleCloseProfile = () => {
-    setOpenProfile(false);
-  };
+    // Setup socket and join user's room
+    newSocket.emit("setup", user);
+    newSocket.on("connected", () => console.log("Socket connected"));
+    newSocket.on("message received", (newMessageReceived) => {
+      if (selectedChat && selectedChat.id === newMessageReceived.chat.id) {
+        setMessages([...messages, newMessageReceived]);
+      }
+    });
+
+    return () => newSocket.disconnect(); // Clean up on unmount
+  }, [selectedChat]);
+
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChat]);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -31,33 +47,30 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
       const response = await getAllMessages(selectedChat.id);
       setMessages(response);
       setLoading(false);
+      socket.emit("join chat", selectedChat.id);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleOpenProfile = () => {
-    setOpenProfile(true);
-  };
-
-  useEffect(() => {
-    fetchMessages();
-  }, [selectedChat]);
-
-  console.log(messages, 'a;llllmessages');
-
-  const sendMessage = async (e) => {
-    if (newMessage) {
+  const sendMessage = async () => {
+    if (newMessage.trim()) {
       const response = await sendNewMessage({
         content: newMessage,
-        chatId: selectedChat.id
+        chatId: selectedChat.id,
       });
-      console.log(response, 'response');
-      setNewMesages('');
+      setNewMessage("");
+      socket.emit("new message", response);
       setMessages([...messages, response]);
     }
   };
+  const handleCloseProfile = () => {
+    setOpenProfile(false);
+  };
 
+  const handleOpenProfile = () => {
+    setOpenProfile(true);
+  };
   console.log(selectedChat, "selectedChat");
 
   return (
@@ -76,7 +89,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
               fontSize: { xs: "28px", md: "30px" },
             }}
           >
-            {!messages &&
+            {messages &&
               (!selectedChat.isGroupChat ? (
                 <>
                   <Typography variant="h6">
@@ -120,13 +133,13 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                       label="Type Something"
                       value={newMessage}
                       fullWidth
-                      onChange={(e) => setNewMesages(e.target.value)}
+                      onChange={(e) => setNewMessage(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') sendMessage(e);
+                        if (e.key === "Enter") sendMessage(e);
                       }}
                     />
                   </Grid>
-                  <Grid item xs={1} className='pl-2'>
+                  <Grid item xs={1} className="pl-2">
                     <Fab color="primary" aria-label="add" onClick={sendMessage}>
                       <SendIcon />
                     </Fab>

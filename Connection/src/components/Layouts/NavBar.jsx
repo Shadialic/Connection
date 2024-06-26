@@ -9,12 +9,14 @@ import Profile from "../modals/Profile";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import { Box } from "@mui/material";
 import { useChatState } from "../../context/ChatProvider";
+import { useNavigate } from "react-router-dom";
 
 function NavBar() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [openProfile, setOpenProfile] = React.useState(false);
     const { selectedChat, setSelectedChat, Chats, setChats, user } =
     useChatState();
+    const navigate=useNavigate()
   
     const open = Boolean(anchorEl);
   
@@ -23,6 +25,8 @@ function NavBar() {
     };
     const handleLogout = () => {
       localStorage.removeItem("token");
+    navigate("/login");
+
     };
   
     const handleClose = () => {

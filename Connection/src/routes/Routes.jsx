@@ -5,6 +5,7 @@ import UserLogin from '../pages/UserPages/Login/UserLogin';
 import SignupPage from '../pages/UserPages/Signup/SignupPage';
 import ChatPage from '../pages/UserPages/Chat/ChatPage';
 import Otp from '../components/Authentication/OtpPage';
+import UserProtect from './protectRoute/UserProtect';
 
 
 function UserRoutes() {
@@ -14,7 +15,7 @@ function UserRoutes() {
             <Route path='/' element={<Home/>}/>
             <Route path='/otp' element={<Otp/>}/>
 
-            <Route path='/chats' element={<ChatPage/>}/>
+            <Route path='/chats' element={<UserProtect><ChatPage/> </UserProtect> }/>
 
             <Route path='/login' element={<UserLogin/>}/>
             <Route path='/signup' element={<SignupPage/>}/>
