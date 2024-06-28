@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { createSecretToken } from "../utils/Jwt/secretoken..js";
 import { Sequelize } from "sequelize";
 import otpGenerator from "otp-generator";
+import { uploadToCloudinary } from "../utils/Cloudnery/cloudnery.js";
 // const LoadUser = async (req, res) => {
 //     try {
 //       // const result = await pool.query('SELECT * FROM users');
@@ -13,6 +14,15 @@ import otpGenerator from "otp-generator";
 //       res.status(500).send('Server error');
 //     }
 //   };
+const getAllUsers=async(req,res)=>{
+  try{
+    const allUsers = await UserDb.findAll();
+    console.log(allUsers,'allUsers');
+    res.json(allUsers)
+  }catch(err){
+    console.log(err);
+  }
+}
 
 const postUser = async (req, res) => {
   try {
@@ -33,7 +43,7 @@ const postUser = async (req, res) => {
     await sendOTP(email);
    
     return res.status(200).json({ message: "OTP sent successfully",
-      userData: { userName, email, password, image: req.file ? req.file.filename : null },
+      userData: { userName, email, password, image: req.file ? req.file.path : null },
      });
   } catch (err) {
     console.error(err.message);
@@ -67,6 +77,7 @@ const sendOTP = async (email) => {
 const otpVerification = async (req, res) => {
   try {
     const { finalValue} = req.body;
+    console.log(finalValue,'finalValue');
     const {userName, email, password,image }=req.body.userData;
    
     const otp = finalValue;
@@ -76,6 +87,8 @@ const otpVerification = async (req, res) => {
     }
 
     const checkUserPresent = await OTP.findOne({ where: { otp: otp } });
+    console.log(checkUserPresent,'checkUserPresent');
+
 
     if (checkUserPresent) {
       const currentTime = new Date();
@@ -86,14 +99,15 @@ const otpVerification = async (req, res) => {
       }
 
       const user = await UserDb.findOne({ where: { email: checkUserPresent.email } });
-
+      const imgUrl=await uploadToCloudinary(image,"profile")
+      console.log(imgUrl,'imgUrl');
       if (!user) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await UserDb.create({
           userName: userName,
           email: email,
           password: hashedPassword,
-          picture: image || undefined,
+          picture: imgUrl.url || undefined,
         });
 
         return res.status(200).json({
@@ -155,7 +169,7 @@ const LoadUser = async (req, res) => {
   }
 };
 
-const getAllUsers = async (req, res) => {
+const searchUsers = async (req, res) => {
   try {
     console.log(req.userId,'req.userId');
     const searchQuery = req.query.search;
@@ -182,4 +196,4 @@ const getAllUsers = async (req, res) => {
 };
 
 // Export the functions
-export { postUser, LoadUser, getAllUsers,otpVerification };
+export { postUser, LoadUser, getAllUsers,otpVerification,searchUsers };

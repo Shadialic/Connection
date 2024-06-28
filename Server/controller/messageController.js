@@ -32,18 +32,35 @@ const sendMessae = async (req, res) => {
           include: [
             {
               model: User,
-              as: "participants",
+              as: "participants", // Ensure this matches the association alias in your model
               attributes: { exclude: ["password"] },
             },
           ],
         },
       ],
     });
-
+    
+    console.log(newmessages, 'newmessages');
+    
+    // Fetch participants manually if needed
+    if (newmessages.chat) {
+      for (let chat of [newmessages.chat]) {
+        const userIds = chat.users;
+        const users = await User.findAll({
+          where: {
+            id: userIds,
+          },
+          attributes: { exclude: ["password"] },
+        });
+        chat.dataValues.participants = users;
+      }
+    }
+    
     // Pass the message ID instead of the message object
     await Chat.update({ latestMessageId: message.id, updatedAt: new Date() }, { where: { id: chatId } });
-
-    res.json(newmessages); // corrected to send the full message object
+    
+    res.json(newmessages);
+  
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Internal server error" }); // Added proper error handling

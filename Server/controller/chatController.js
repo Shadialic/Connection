@@ -2,6 +2,7 @@ import Chat from "../model/chatModel.js";
 import Message from "../model/messageModel.js";
 import User from "../model/userModel.js";
 import { Op } from 'sequelize';
+import { uploadToCloudinary } from "../utils/Cloudnery/cloudnery.js";
 
 const accessChat = async (req, res) => {
   const { userId } = req.body;
@@ -10,9 +11,8 @@ const accessChat = async (req, res) => {
     console.log("UserId param not sent with request");
     return res.status(400).json({ message: "userId not exist" });
   }
-
   try {
-    const currentUserId = req.userId; // Assuming req.userId is set by middleware/auth
+    const currentUserId = req.userId; 
 
     let isChat = await Chat.findOne({
       where: { isGroupChat: false },
@@ -103,11 +103,18 @@ const fetchChats = async (req, res) => {
 };
 
 const createGroupChat = async (req, res) => {
-  console.log(req.body); // Ensure req.body is correctly received
+  console.log(req.body,'oooooo');
+  if (!req.file) {
+    console.log('----ccc');
+    // return res.status(400).send({ message: 'No file uploaded' });
+  }
+ // Ensure req.body is correctly received
+  const image=req.file
 
   let users;
   try {
-    users = JSON.parse(req.body.users); // Parse the array of user IDs from req.body.users
+    users = JSON.parse(req.body.users);
+    console.log(users,'pepepepep'); // Parse the array of user IDs from req.body.users
   } catch (error) {
     return res.status(400).send({ message: "Invalid users format" });
   }
@@ -120,13 +127,15 @@ const createGroupChat = async (req, res) => {
 
   // Add the current user (admin) to the users array
   users.push(req.userId);
-
+      const imgUrl=await uploadToCloudinary(image,"profile")
+    
   try {
     // Create the group chat
     const groupChat = await Chat.create({
       chatName: req.body.groupName,
       isGroupChat: true,
       adminId: req.userId,
+      groupImage:imgUrl.url
     });
 
     // Add users to the group chat using the addParticipants method
@@ -150,7 +159,7 @@ const createGroupChat = async (req, res) => {
       ],
     });
 
-    res.status(201).json(fullGroupChat); // Respond with the full group chat details
+    res.status(201).json(fullGroupChat); 
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -175,7 +184,6 @@ const renameGroup = async (req, res) => {
       return res.json({ message: "Chat Not Found" });
     }
 
-    // Fetch the updated chat with related users and admin
     const updatedChat = await Chat.findOne({
       where: { id: ChatId },
       include: [
@@ -204,7 +212,6 @@ const addToGroup = async (req, res) => {
   console.log(req.body,'req.body');
 
   try {
-    // Find the chat to ensure it exists and include users to check if the requester is admin
     const chat = await Chat.findOne({
       where: { id: ChatId },
       include: [

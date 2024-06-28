@@ -11,6 +11,10 @@ const Chat = sequelize.define('Chat', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  groupImage: {
+    type: DataTypes.STRING,
+    defaultValue: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+  },
   adminId: {
     type: DataTypes.INTEGER,
     allowNull: false,

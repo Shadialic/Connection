@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import {
   accessChat,
   addToGroup,
@@ -7,15 +8,14 @@ import {
   removeFromGroup,
   renameGroup,
 } from "../controller/chatController.js";
-import multer from 'multer';
-
-const upload = multer({ dest: 'uploads/' });
+import { upload } from "../utils/Multer/multer.js";
 
 const chatRouter = Router();
 
 chatRouter.post("/users",accessChat);
-chatRouter.get("/", fetchChats);
-chatRouter.post("/group",upload.single('image'), createGroupChat);
+chatRouter.get("/",fetchChats);
+
+chatRouter.post("/group",upload.single('image'),createGroupChat);
 chatRouter.put("/rename", renameGroup);
 chatRouter.put("/groupremove",removeFromGroup);
 chatRouter.put("/groupadd", addToGroup);
