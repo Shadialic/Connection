@@ -7,8 +7,11 @@ import call from '../../../public/icons/call.png';
 import users from '../../../public/icons/users.png';
 import setting from '../../../public/icons/setting.png';
 import all from '../../../public/icons/icons8-border-all-48 (1).png';
+import { useChatState } from '../../context/ChatProvider';
 
 function Sidebar() {
+  const { user } = useChatState();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = (open) => (event) => {
@@ -24,7 +27,7 @@ function Sidebar() {
         <div className="mb-4">
           <Avatar
             alt="Remy Sharp"
-            src="https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+             src={user.picture}
             sx={{
               width: 40,
               height: 40,

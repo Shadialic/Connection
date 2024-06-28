@@ -16,7 +16,9 @@ function ChatPage() {
       </div>
       <div className="md:w-1/2 w-full  max-h-svh overflow-auto hidescroll ">
         {user && (
+          <>
           <MyChats fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+          </>
         )}
       </div>
       <div className="w-full hidden md:block max-h-svh overflow-auto hidescroll  ">

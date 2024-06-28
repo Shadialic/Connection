@@ -1,6 +1,5 @@
-
-export const getSender=(loggedUser,users)=> {
-  console.log(users,'-----');
+export const getSender = (loggedUser, users) => {
+  console.log(users,'users---------');
   return users[0].id === loggedUser.id ? users[1].userName : users[0].userName;
 }
 

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { otpVerification } from "../../api/UserApi";
 import toast, { Toaster } from "react-hot-toast";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 
 const otpCss = {
@@ -109,9 +109,12 @@ const Otp = ({ length = 6 }) => {
                     Confirm
                   </button>
                 </div>
-                <div className="flex w-full h-fit justify-start items-center text-[13px] text-primary">
+                <div 
+                className="flex w-full h-fit justify-start items-center text-[13px] text-primary">
                   <span className="cursor-pointer w-fit h-fit flex">
                     <svg
+               onClick={() => navigate('/signup')}
+
                       stroke="currentColor"
                       fill="currentColor"
                       strokeWidth="0"

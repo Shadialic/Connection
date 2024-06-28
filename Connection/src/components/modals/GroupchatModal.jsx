@@ -64,12 +64,9 @@ console.log('-=-=-=-',groupName,selectedUsers,groupImage);
       formData.append("groupName", groupName);
       formData.append("selectedUsers", JSON.stringify(selectedUsers));
       formData.append("groupImage", groupImage);
-      console.log(formData, 'formData');
-
-      const response = await CreateGroup( {
-        groupName: groupName,
-        users: JSON.stringify(selectedUsers.map((u) => u.id)),
-      },groupImage);
+      // console.log(formData, 'formData');
+console.log(groupImage,'groupImage');
+      const response = await CreateGroup(formData);
       console.log(response,'wwwwwwwwwwwwwwww');
       setChats([response, ...Chats]);
       toast.success('New Group Chat Created!');
@@ -107,7 +104,7 @@ console.log('-=-=-=-',groupName,selectedUsers,groupImage);
         <FormControl fullWidth>
           <TextField
             label="Group Name"
-            id="group-name"
+            id="groupName"
             value={groupName}
             onChange={handleGroupNameChange}
             size="small"
@@ -116,7 +113,7 @@ console.log('-=-=-=-',groupName,selectedUsers,groupImage);
           />
           <TextField
             label="Search Users"
-            id="search-users"
+            id="selectedUsers"
             value={search}
             onChange={handleSearchChange}
             size="small"
@@ -146,6 +143,7 @@ console.log('-=-=-=-',groupName,selectedUsers,groupImage);
             <Button variant="contained" component="label">
               Upload Image
               <input
+              id='groupImage'
                 type="file"
                 hidden
                 accept="image/*"

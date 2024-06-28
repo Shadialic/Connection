@@ -77,6 +77,16 @@ export async function SearchUsers(searchQuery) {
     throw err;
   }
 }
+export async function getAllUsers() {
+  try {
+    const response = await UserApi.get("/getAllUsers/");
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Error in UserData:", err);
+    throw err;
+  }
+}
 
 export async function fetchingChats() {
   try {
@@ -88,6 +98,7 @@ export async function fetchingChats() {
   }
 }
 export async function CreateGroup(data) {
+  console.log(data,'imaggggggggg');
   try {
     const response = await UserApi.post("/chat/group",data, {
       headers: {
