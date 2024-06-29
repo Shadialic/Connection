@@ -32,7 +32,7 @@ const sendMessae = async (req, res) => {
           include: [
             {
               model: User,
-              as: "participants", // Ensure this matches the association alias in your model
+              as: "participants", 
               attributes: { exclude: ["password"] },
             },
           ],
@@ -57,13 +57,21 @@ const sendMessae = async (req, res) => {
     }
     
     // Pass the message ID instead of the message object
-    await Chat.update({ latestMessageId: message.id, updatedAt: new Date() }, { where: { id: chatId } });
+    await Chat.update(
+      {
+        latestMessageId: message.id,
+        updatedAt: new Date(),
+      },
+      {
+        where: { id: chatId },
+      }
+    );
     
     res.json(newmessages);
   
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Internal server error" }); // Added proper error handling
+    res.status(500).json({ message: "Internal server error" }); 
   }
 };
 

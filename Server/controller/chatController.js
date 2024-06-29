@@ -73,17 +73,35 @@ const fetchChats = async (req, res) => {
   try {
     const currentUserId = req.userId;
 
+    // Fetch chats where the current user is a participant, ordered by updatedAt
     let chats = await Chat.findAll({
       where: {
         users: {
-          [Op.contains]: [currentUserId], // Ensure currentUserId is in the users array
+          [Op.contains]: [currentUserId],
         },
       },
       order: [["updatedAt", "DESC"]],
     });
 
-    // Fetch user details for each chat
+    // Fetch latest message details for each chat
     for (let chat of chats) {
+      if (chat.latestMessageId) {
+        const latestMessage = await Message.findOne({
+          where: { id: chat.latestMessageId },
+          include: [
+            {
+              model: User,
+              as: "sender",
+              attributes: { exclude: ["password"] },
+            },
+          ],
+        });
+
+        // Attach latest message to chat object
+        chat.dataValues.latestMessage = latestMessage || null;
+      }
+
+      // Fetch user details for each chat
       const userIds = chat.users;
       const users = await User.findAll({
         where: {
@@ -102,44 +120,43 @@ const fetchChats = async (req, res) => {
   }
 };
 
-const createGroupChat = async (req, res) => {
-  console.log(req.body,'oooooo');
-  if (!req.file) {
-    console.log('----ccc');
-    // return res.status(400).send({ message: 'No file uploaded' });
-  }
- // Ensure req.body is correctly received
-  const image=req.file
 
+const createGroupChat = async (req, res) => {
+  console.log(req.body, 'oooooo');
+  const { chatName, groupPhoto } = req.body;
   let users;
+  
   try {
     users = JSON.parse(req.body.users);
-    console.log(users,'pepepepep'); // Parse the array of user IDs from req.body.users
+    console.log(users, 'pepepepep');
   } catch (error) {
-    return res.status(400).send({ message: "Invalid users format" });
+    return res.status(400).json({ message: "Invalid users format" });
   }
 
   if (users.length < 2) {
-    return res
-      .status(400)
-      .send("More than 2 users are required to form a group chat");
+    return res.status(400).json({ message: "More than 2 users are required to form a group chat" });
   }
 
-  // Add the current user (admin) to the users array
-  users.push(req.userId);
-      const imgUrl=await uploadToCloudinary(image,"profile")
-    
+  let members = users.map(user => user.id);
+
+  // Add the current user (admin) to the members array
+  members.push(req.userId);
+  console.log(members, '=================');
+
   try {
     // Create the group chat
     const groupChat = await Chat.create({
-      chatName: req.body.groupName,
+      chatName: chatName,
       isGroupChat: true,
       adminId: req.userId,
-      groupImage:imgUrl.url
+      groupImage: groupPhoto,
+      users: members
     });
 
-    // Add users to the group chat using the addParticipants method
-    await groupChat.addParticipants(users);
+    console.log(groupChat, 'groupChat');
+
+    // Add users to the group chat
+    await groupChat.addParticipants(members);
 
     // Retrieve the full group chat with participants and admin populated
     const fullGroupChat = await Chat.findOne({
@@ -149,21 +166,25 @@ const createGroupChat = async (req, res) => {
           model: User,
           as: "participants",
           attributes: { exclude: ["password"] },
-          through: { attributes: [] }, // Exclude timestamps from join table
+          through: { attributes: [] }
         },
         {
           model: User,
           as: "admin",
-          attributes: { exclude: ["password"] },
-        },
-      ],
+          attributes: { exclude: ["password"] }
+        }
+      ]
     });
 
-    res.status(201).json(fullGroupChat); 
+    res.status(201).json(fullGroupChat);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
 };
+
+
+
 
 const renameGroup = async (req, res) => {
   const { ChatId, chatName } = req.body;
