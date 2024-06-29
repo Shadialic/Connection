@@ -13,13 +13,14 @@ import TextField from "@mui/material/TextField";
 import { getAllMessages, sendNewMessage } from "../../api/UserApi";
 import ScrollableChat from "./ScrollableChat";
 import io from "socket.io-client";
-import Lottie  from "react-lottie";
-import animationData from '../../animations/typin.json';
+import Lottie from "react-lottie";
+import animationData from "../../animations/typin.json";
 
-const ENDPOINT = "http://localhost:3000";  // Update this to your actual endpoint
+const ENDPOINT = "http://localhost:3000"; // Update this to your actual endpoint
 
 function SingleChat({ fetchAgain, setFetchAgain }) {
-  const { user, selectedChat, setSelectedChat ,notification,setNotification} = useChatState();
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    useChatState();
   const [openProfile, setOpenProfile] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -63,11 +64,14 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
   useEffect(() => {
     if (socket) {
       socket.on("message received", (newMessageReceived) => {
-        if (!selectedChatCompare || selectedChatCompare.id !== newMessageReceived.chat.id) {
-       if(!notification.includes(newMessageReceived)){
-        setNotification([newMessageReceived,...notification])
-        setFetchAgain(!fetchAgain)
-       }
+        if (
+          !selectedChatCompare ||
+          selectedChatCompare.id !== newMessageReceived.chat.id
+        ) {
+          if (!notification.includes(newMessageReceived)) {
+            setNotification([newMessageReceived, ...notification]);
+            setFetchAgain(!fetchAgain);
+          }
         } else {
           setMessages((prevMessages) => [...prevMessages, newMessageReceived]);
         }
@@ -77,7 +81,6 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
       };
     }
   }, [socket, selectedChatCompare]);
-
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -157,28 +160,27 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
             {messages &&
               (!selectedChat.isGroupChat ? (
                 <>
-                  <Typography variant="h6">
-                    {getSender(user, selectedChat.participants)}
-                  </Typography>
                   <Profile
                     user={getSenderFull(user, selectedChat.participants)}
                   />
                 </>
               ) : (
                 <>
-                  <Typography variant="h6">
-                    {selectedChat.chatName.toUpperCase()}
-                  </Typography>
-                  <IconButton onClick={handleOpenProfile}>
-                    <RemoveRedEyeIcon />
-                  </IconButton>
-                  <UpdateGroupChatModal
-                    open={openProfile}
-                    handleClose={handleCloseProfile}
-                    setFetchAgain={setFetchAgain}
-                    fetchAgain={fetchAgain}
-                    fetchMessages={fetchMessages}
-                  />
+                  <div className="w-full text-end">
+                    <UpdateGroupChatModal
+                      open={openProfile}
+                      handleClose={handleCloseProfile}
+                      setFetchAgain={setFetchAgain}
+                      fetchAgain={fetchAgain}
+                      fetchMessages={fetchMessages}
+                    />
+                    <IconButton
+                      className="text-end"
+                      onClick={handleOpenProfile}
+                    >
+                      <RemoveRedEyeIcon />
+                    </IconButton>
+                  </div>
                 </>
               ))}
           </Box>
@@ -210,7 +212,11 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                       />
                     </Grid>
                     <Grid item xs={1} className="pl-2">
-                      <Fab color="primary" aria-label="add" onClick={sendMessage}>
+                      <Fab
+                        color="primary"
+                        aria-label="add"
+                        onClick={sendMessage}
+                      >
                         <SendIcon />
                       </Fab>
                     </Grid>

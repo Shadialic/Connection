@@ -4,11 +4,21 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useChatState } from "../../context/ChatProvider";
-import { TextField, Avatar, List, ListItem, ListItemAvatar, ListItemText, IconButton, Checkbox } from "@mui/material";
+import {
+  TextField,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  IconButton,
+  Checkbox,
+} from "@mui/material";
 import { FormControl } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { CreateGroup, SearchUsers } from "../../api/UserApi";
 import toast, { Toaster } from "react-hot-toast";
+import { uploadToCloudinary } from "../../utils/cloudnery/Cloudnery";
 
 function GroupchatModal({ open, handleClose }) {
   const [groupName, setGroupName] = React.useState("");
@@ -21,7 +31,7 @@ function GroupchatModal({ open, handleClose }) {
   const handleGroupNameChange = (e) => {
     setGroupName(e.target.value);
   };
-console.log('-=-=-=-',groupName,selectedUsers,groupImage);
+  console.log("-=-=-=-", groupName, selectedUsers, groupImage);
   const handleSearchChange = async (e) => {
     setSearch(e.target.value);
     const response = await SearchUsers(e.target.value);
@@ -34,9 +44,13 @@ console.log('-=-=-=-',groupName,selectedUsers,groupImage);
     }
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     if (e.target.files && e.target.files[0]) {
-      setGroupImage(e.target.files[0]);
+      const file = e.target.files[0];
+      const data = await uploadToCloudinary(file);
+      console.log(data, "imagessss");
+
+      setGroupImage(data.url);
     }
   };
 
@@ -60,18 +74,24 @@ console.log('-=-=-=-',groupName,selectedUsers,groupImage);
     } else if (selectedUsers.length < 2) {
       toast.error("Add at least two members");
     } else {
-      const formData = new FormData();
-      formData.append("groupName", groupName);
-      formData.append("selectedUsers", JSON.stringify(selectedUsers));
-      formData.append("groupImage", groupImage);
+      // const formData = new FormData();
+      // formData.append("groupName", groupName);
+      // formData.append("selectedUsers", JSON.stringify(selectedUsers));
+      // formData.append("groupImage", groupImage);
       // console.log(formData, 'formData');
-console.log(groupImage,'groupImage');
-      const response = await CreateGroup(formData);
-      console.log(response,'wwwwwwwwwwwwwwww');
+      console.log(groupImage, "groupImage");
+      // const data=uploadToCloudinary(groupImage)
+      // console.log(data,'imagessss');
+      const response = await CreateGroup({
+        chatName: groupName,
+        users: JSON.stringify(selectedUsers),
+        groupPhoto: groupImage,
+      });
+      console.log(response, "wwwwwwwwwwwwwwww");
       setChats([response, ...Chats]);
-      toast.success('New Group Chat Created!');
-      setGroupName('')
-      setSelectedUsers([])
+      toast.success("New Group Chat Created!");
+      setGroupName("");
+      setSelectedUsers([]);
       handleClose();
     }
   };
@@ -86,8 +106,8 @@ console.log(groupImage,'groupImage');
     border: "2px solid #000",
     boxShadow: 24,
     p: 4,
-    maxHeight: '90vh',
-    overflow: 'auto'
+    maxHeight: "90vh",
+    overflow: "auto",
   };
 
   return (
@@ -98,7 +118,10 @@ console.log(groupImage,'groupImage');
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography variant="h5" className="font-prompt-semibold text-black text-center text-2xl mb-4">
+        <Typography
+          variant="h5"
+          className="font-prompt-semibold text-black text-center text-2xl mb-4"
+        >
           Create Group Chat
         </Typography>
         <FormControl fullWidth>
@@ -122,7 +145,11 @@ console.log(groupImage,'groupImage');
           />
           <List>
             {searchResult.map((user) => (
-              <ListItem key={user.id} button onClick={() => handleUserSelect(user)}>
+              <ListItem
+                key={user.id}
+                button
+                onClick={() => handleUserSelect(user)}
+              >
                 <ListItemAvatar>
                   <Avatar src={user.avatar} />
                 </ListItemAvatar>
@@ -131,10 +158,7 @@ console.log(groupImage,'groupImage');
                     <ListItemText primary={user.userName} />
                     <ListItemText primary={user.email} className="text-sm" />
                   </div>
-                  <Checkbox
-                    edge="end"
-                    checked={selectedUsers.includes(user)}
-                  />
+                  <Checkbox edge="end" checked={selectedUsers.includes(user)} />
                 </div>
               </ListItem>
             ))}
@@ -143,7 +167,7 @@ console.log(groupImage,'groupImage');
             <Button variant="contained" component="label">
               Upload Image
               <input
-              id='groupImage'
+                id="groupImage"
                 type="file"
                 hidden
                 accept="image/*"
@@ -160,10 +184,23 @@ console.log(groupImage,'groupImage');
             <Typography variant="h6">Selected Users:</Typography>
             <Box display="flex" flexWrap="wrap">
               {selectedUsers.map((user) => (
-                <Box key={user.id} display="flex" alignItems="center" m={1} p={1} bgcolor="#8c2bb9" borderRadius="8px">
+                <Box
+                  key={user.id}
+                  display="flex"
+                  alignItems="center"
+                  m={1}
+                  p={1}
+                  bgcolor="#8c2bb9"
+                  borderRadius="8px"
+                >
                   <Avatar src={user.avatar} />
-                  <Typography variant="body2" color="white" ml={1}>{user.userName}</Typography>
-                  <IconButton onClick={() => handleUserRemove(user)} size="small">
+                  <Typography variant="body2" color="white" ml={1}>
+                    {user.userName}
+                  </Typography>
+                  <IconButton
+                    onClick={() => handleUserRemove(user)}
+                    size="small"
+                  >
                     <CloseIcon fontSize="small" />
                   </IconButton>
                 </Box>

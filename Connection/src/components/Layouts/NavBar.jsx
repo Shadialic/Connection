@@ -11,15 +11,16 @@ import { Box } from "@mui/material";
 import { useChatState } from "../../context/ChatProvider";
 import { useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
-import { getSender } from "../../config/ChatLogics";
+import { getSender, getSenderImage } from "../../config/ChatLogics";
 
 function NavBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(false);
-  const [anchorElNotifications, setAnchorElNotifications] =useState(null);
-  const { selectedChat, setSelectedChat, Chats, setChats, user, notification,setNotification } =
+  const [anchorElNotifications, setAnchorElNotifications] = useState(null);
+  const { selectedChat, setSelectedChat, user, notification, setNotification } =
     useChatState();
   const navigate = useNavigate();
+  console.log(selectedChat, "selectedChat");
 
   const open = Boolean(anchorEl);
   const notificationsOpen = Boolean(anchorElNotifications);
@@ -65,11 +66,23 @@ function NavBar() {
   };
 
   return (
-    <div className="w-[100%]">
+    <div className="w-full">
       <div className="h-16 shadow-md flex justify-between items-center px-4">
+        {selectedChat && (
+          <Avatar
+            src={getSenderImage(user, selectedChat.participants)}
+            sx={{ width: 46, height: 46 }}
+          />
+        )}
+
         <h1 className="font-prompt-semibold text-black text-2xl">
-          Connections
+          {!selectedChat
+            ? "Connections"
+            : selectedChat.isGroupChat
+            ? selectedChat.chatName
+            : getSender(user, selectedChat.participants)}
         </h1>
+
         <div className="flex items-center">
           <IconButton
             aria-label={notificationsLabel(notification.length)}
@@ -98,17 +111,19 @@ function NavBar() {
             )}
             {notification &&
               notification.map((option, index) => (
-                <MenuItem key={index}
-                onClick={()=>{
-                  setSelectedChat(option.chat)
-                  setNotification(notification.filter((n)=>n!==option))
-
-                }}
+                <MenuItem
+                  key={index}
+                  onClick={() => {
+                    setSelectedChat(option.chat);
+                    setNotification(notification.filter((n) => n !== option));
+                  }}
                 >
-               
                   {option.chat.isGroupChat
-                    ? `New Message in${option.chat.chatName}`
-                    : `New Message from ${getSender(user, option.chat.participants)}`}
+                    ? `New Message in ${option.chat.chatName}`
+                    : `New Message from ${getSender(
+                        user,
+                        option.chat.participants
+                      )}`}
                 </MenuItem>
               ))}
           </Menu>
@@ -125,7 +140,6 @@ function NavBar() {
             </IconButton>
           </Tooltip>
           <Menu
-          
             anchorEl={anchorEl}
             id="account-menu"
             open={open}
@@ -160,9 +174,8 @@ function NavBar() {
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
             <MenuItem onClick={handleOpenProfile}>
-              <Avatar
-            
-              /> Profile
+              <Avatar />
+              Profile
             </MenuItem>
             <MenuItem onClick={handleLogout}>
               <ListItemIcon>{/* Add Logout icon here */}</ListItemIcon>

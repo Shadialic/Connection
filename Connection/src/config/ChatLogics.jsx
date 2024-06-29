@@ -1,7 +1,10 @@
 export const getSender = (loggedUser, users) => {
-  console.log(users,'users---------');
-  return users[0].id === loggedUser.id ? users[1].userName : users[0].userName;
+  return (users[0].id === loggedUser.id ? users[1].userName : users[0].userName)
 }
+export const getSenderImage = (loggedUser, users) => {
+  return (users[0].id === loggedUser.id ? users[1].picture : users[0].picture)
+}
+
 
 export const getSenderFull=(loggedUser,users)=> {
   return users[0].id===loggedUser.id?users[1]:users[0].userName;
@@ -33,5 +36,7 @@ export const isLastMessage = (messages, i, userId) => {
     messages[messages.length - 1].sender.id
   );
 };
+// export const getNotification(loggedUser,notification,users)=>{
 
+// }
 

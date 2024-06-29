@@ -48,7 +48,7 @@ function LoginForm() {
       toast(userData.alert);
       localStorage.setItem("token", userData.token);
       if (userData.status && userData.token) {
-        navigate("/");
+        navigate("/chat");
       }
     } catch (error) {
       console.error("Error during login:", error);

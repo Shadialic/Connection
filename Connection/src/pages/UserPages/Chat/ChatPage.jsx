@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useChatState } from "../../../context/ChatProvider";
-import Sidebar from "../../../components/Chatpage/Sidebar";
 import MyChats from "../../../components/Chatpage/MyChats";
 import ChatBox from "../../../components/Chatpage/ChatBox";
+import Sidebar from "../../../components/Layouts/Sidebar";
 
 function ChatPage() {
   const { user } = useChatState();

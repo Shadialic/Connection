@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useChatState } from "../../context/ChatProvider";
+import { Avatar } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -20,7 +21,7 @@ const style = {
 export default function Profile({ open, handleClose }) {
   const { user } = useChatState();
   const placeholderImage = "https://via.placeholder.com/150";
-  console.log(user, "030303");
+
   return (
     <Modal
       open={open}
@@ -29,13 +30,24 @@ export default function Profile({ open, handleClose }) {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          {user ? user.userName : "Your Name"}
-        </Typography>
-        <img src={user.picture ? user.picture : placeholderImage} alt="" />
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          {user ? user.email : "Your Name"}
-        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <Avatar
+            alt="User Avatar"
+            src={user.picture || placeholderImage}
+            sx={{
+              width: 120,
+              height: 120,
+              bgcolor: "#8338ec",
+              borderRadius: "full",
+            }}
+          />
+          <Typography variant="h6" component="h2" sx={{ mt: 2 }}>
+            {user ? user.userName : "Your Name"}
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 1 }}>
+            {user ? user.email : "Your Email"}
+          </Typography>
+        </Box>
       </Box>
     </Modal>
   );
