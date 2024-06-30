@@ -9,7 +9,7 @@ function ChatPage() {
   const [fetchAgain, setFetchAgain] = useState(false);
   return (
     <div className="flex w-svw h-svh">
-      <div className="w-fit h-full">
+      <div className="w-fit h-full ">
         {user && (
           <Sidebar fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         )}
@@ -21,7 +21,7 @@ function ChatPage() {
           </>
         )}
       </div>
-      <div className="w-full hidden md:block max-h-svh overflow-auto hidescroll  ">
+      <div className="w-full hidden md:block max-h-svh overflow-auto hidescroll   ">
         {user && (
           <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         )}

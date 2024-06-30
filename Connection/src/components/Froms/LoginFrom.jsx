@@ -61,18 +61,18 @@ function LoginForm() {
       <img
         src={bg}
         alt=""
-        className="absolute w-full h-full object-cover z-0"
+        className=" sm:absolute w-full h-full object-cover z-0 "
       />
-      <div className="w-[85%] h-[88%] bg-[#fff] rounded-3xl flex justify-center items-center shadow-lg relative z-10 p-8">
+      <div className="w-full sm:w-[85%] h-[88%] bg-[#fff] rounded-3xl flex justify-center items-center shadow-lg relative z-10 p-8">
         <div className="flex w-full h-[90%] shadow-xl">
-          <div className="flex justify-center items-center w-1/2 h-full">
+          <div className="hidden sm:flex justify-center items-center w-1/2 h-full">
             <img
               src={login}
               alt=""
-              className="w-[90%] h-[90%] object-contain"
+              className="w-full sm:w-[90%] h-[90%] object-contain"
             />
           </div>
-          <div className="flex flex-col justify-center gap-2 items-center w-1/2 h-full">
+          <div className="flex flex-col justify-center gap-2 items-center w-full sm:w-1/2 h-full">
             <img src={user} alt="" className="w-32" />
             <h1>Sign in to your Account</h1>
             <form

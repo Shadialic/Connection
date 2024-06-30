@@ -4,9 +4,7 @@ import NavBar from "../Layouts/NavBar";
 import { Box } from "@mui/material";
 import SingleChat from "./SingleChat";
 function ChatBox({ fetchAgain, setFetchAgain }) {
-  const { selectedChat, setSelectedChat, Chats, setChats, user } =
-    useChatState();
- 
+
 
   return (
     <>

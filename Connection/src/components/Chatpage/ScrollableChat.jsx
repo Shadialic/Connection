@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import ScrollableFeed from "react-scrollable-feed";
 import { useChatState } from "../../context/ChatProvider";
 import { isLastMessage, isSameSender } from "../../config/ChatLogics";
@@ -6,11 +6,15 @@ import { Avatar, Tooltip, Typography } from "@mui/material";
 import { TimeMange } from "../Authentication/TimeManagment";
 
 function ScrollableChat({ messages }) {
-  const { user } = useChatState();
+  const scroll = useRef();
 
+  const { user } = useChatState();
+  useEffect(() => {
+    scroll.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
   console.log(messages, "messages");
   return (
-    <div className="h-screen overflow-y-auto p-4 pb-36">
+    <div className="h-screen overflow-y-auto p-4 pb-36 hidescroll">
       <ScrollableFeed>
         {messages &&
           messages.map((m, i) => (
@@ -45,6 +49,7 @@ function ScrollableChat({ messages }) {
               </div>
             </div>
           ))}
+           <div ref={scroll}></div>
       </ScrollableFeed>
     </div>
   );

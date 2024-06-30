@@ -1,26 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { TextField, IconButton, Badge } from "@material-ui/core";
 import toast, { Toaster } from "react-hot-toast";
-import { jwtDecode } from "jwt-decode"; // Remove the destructuring for default export
+import { jwtDecode } from "jwt-decode"; // Corrected import statement
 import { SearchOutlined } from "@material-ui/icons";
 import { useChatState } from "../../context/ChatProvider";
 import { fetchingChats } from "../../api/UserApi";
 import Box from "@mui/material/Box";
 import { Avatar, Button, Typography } from "@mui/material";
 import ChatLoading from "./ChatLoading";
-import {  getSender, getSenderImage } from "../../config/ChatLogics";
+import {
+  getNotificationCount,
+  getSender,
+  getSenderImage,
+} from "../../config/ChatLogics"; // Included getNotification function
 import GroupchatModal from "../modals/GroupchatModal";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ImageIcon from "@mui/icons-material/Image";
+
 function MyChats({ fetchAgain }) {
   const [loggerUser, setLoggerUser] = useState();
-  const { selectedChat, setSelectedChat, Chats, setChats, user,notification } =
-    useChatState();
-  console.log(Chats, "Chats");
-  const [openProfile, setOpenProfile] = useState(false);
+  const {
+    selectedChat,
+    setSelectedChat,
+    Chats,
+    setChats,
+    user,
+    notification,
+    setNotification,
+  } = useChatState();
+
+  const [openProfile, setOpenProfile] = useState(false); // State declaration for openProfile
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -47,7 +54,8 @@ function MyChats({ fetchAgain }) {
 
   const handleOpenProfile = () => setOpenProfile(true);
   const handleCloseProfile = () => setOpenProfile(false);
-  console.log(Chats, "ssssssssssssssssssss");
+
+  // Function to calculate notification counts
 
   return (
     <Box
@@ -77,13 +85,13 @@ function MyChats({ fetchAgain }) {
           >
             My Chats
           </Typography>
-          <Button
+          {/* <Button
             onClick={handleOpenProfile}
             variant="contained"
             color="primary"
           >
             Create New Group
-          </Button>
+          </Button> */}
         </Box>
         <TextField
           className="w-full"
@@ -110,89 +118,70 @@ function MyChats({ fetchAgain }) {
       >
         {Chats ? (
           Chats.map((chat) => (
-            //       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-            //         <ListItem>
-            //   {/* <ListItemAvatar>
-            //     <Avatar>
-            //       <ImageIcon />
-            //     </Avatar>
-            //   </ListItemAvatar> */}
-            //   <ListItemText primary="Photos" secondary="Jan 9, 2014" />
-            // </ListItem>
-            // </List>
-            // <Box
-            //   onClick={() => setSelectedChat(chat)}
-            //   cursor="pointer"
-            //   bgcolor={selectedChat === chat ? "#8338ec" : "#fff"}
-            //   color={selectedChat === chat ? "white" : "black"}
-            //   px={2}
-            //   width="100%"
-            //   py={2}
-            //   borderWidth="2px"
-            //   borderRadius="lg"
-            //   key={chat._id}
-            //   className="hover:bg-[#8338ec] w-full hover:text-[#fff] rounded-md flex  h-16 p-2 items-center"
-            // >
-            //   {chat.isGroupChat ? (
-            //     <Avatar src={chat.groupImage} sx={{ width: 46, height: 46 }} />
-            //   ) : (
-            //     <Avatar
-            //       src={getSenderImage(loggerUser, chat.participants)}
-            //       sx={{ width: 46, height: 46 }}
-            //     />
-            //   )}
             <div
-              className={`flex flex-row py-2 px-2 justify-center items-center ${
+              key={chat.id}
+              className={`py-3 px-5  ${
                 selectedChat === chat
                   ? "bg-[#8338ec] text-white"
                   : "bg-white text-black"
-              } hover:bg-[#8338ec] w-full hover:text-[#fff]  rounded-md`}
-              onClick={() => setSelectedChat(chat)}
+              } hover:bg-[#8338ec] hover:text-[#fff] rounded-md`}
+              onClick={() => {
+                setSelectedChat(chat);
+                setNotification(
+                  notification.filter((n) => n.chatId !== chat.id)
+                );
+              }}
             >
-              <div className={`w-1/4 `}>
-                {chat.isGroupChat ? (
+              <div class="divide-y divide-gray-200">
+                {/* <button class="w-full text-left py-2 focus:outline-none focus-visible:bg-indigo-50"> */}
+                <div className="flex items-center">
                   <Avatar
-                    src={chat.groupImage}
-                    sx={{ width: 46, height: 46 }}
+                    className="rounded-full items-start flex-shrink-0 mr-3"
+                    src={
+                      chat.isGroupChat
+                        ? chat.groupImage
+                        : getSenderImage(loggerUser, chat.participants)
+                    }
+                    width="32"
+                    height="32"
+                    alt="Marie Zulfikar"
                   />
-                ) : (
-                  <Avatar
-                    src={getSenderImage(loggerUser, chat.participants)}
-                    sx={{ width: 46, height: 46 }}
-                  />
-                )}
+                  <div className="w-full">
+                    <h1 className="text-lg  ">
+                      {!chat.isGroupChat
+                        ? getSender(loggerUser, chat.participants)
+                        : chat.chatName}{" "}
+                      <span className="w-full flex justify-end items-end pr-2">
+                        <Badge
+                          badgeContent={getNotificationCount(
+                            chat,
+                            notification,
+                            loggerUser
+                          )}
+                          color="primary"
+                        />{" "}
+                      </span>
+                    </h1>
+
+                    <div className="text-[11px]">
+                      {" "}
+                      {chat.latestMessage && (
+                        <>
+                          <b>
+                            {chat.isGroupChat &&
+                              chat.latestMessage.sender.userName}
+                          </b>{" "}
+                          {chat.latestMessage.content.length > 50
+                            ? chat.latestMessage.content.substring(0, 51) +
+                              "..."
+                            : chat.latestMessage.content}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="w-full">
-  <div className="text-lg font-semibold">
-    {!chat.isGroupChat
-      ? getSender(loggerUser, chat.participants)
-      : chat.chatName}
-  </div>
-  <div className="flex justify-end items-end">
-    {/* <Badge badgeContent={getNotification(loggerUser,notification,chat.participants)} color="primary" /> */}
-  </div>
-  <span
-    className={`${
-      selectedChat === chat
-        ? "bg-[#8338ec] text-white"
-        : "text-black"
-    } hover:text-[#fff]`}
-  >
-    {chat.latestMessage && (
-      <>
-        <b>{chat.latestMessage.sender.name}:</b>{" "}
-        {chat.latestMessage.content.length > 50
-          ? chat.latestMessage.content.substring(0, 51) + "..."
-          : chat.latestMessage.content}
-      </>
-    )}
-  </span>
-  
-</div>
-
             </div>
-
-            // </Box>
           ))
         ) : (
           <ChatLoading />

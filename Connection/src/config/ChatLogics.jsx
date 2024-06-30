@@ -36,7 +36,16 @@ export const isLastMessage = (messages, i, userId) => {
     messages[messages.length - 1].sender.id
   );
 };
-// export const getNotification(loggedUser,notification,users)=>{
+export const getNotificationCount = (chat,notification,loggerUser) => {
+  if (!notification) return 0; 
 
-// }
+  const unreadCount = notification.filter(
+    (notif) =>
+      notif.chatId === chat.id &&
+      notif.senderId !== loggerUser.id &&
+      !notif.readBy?.includes(loggerUser.id)
+  ).length;
+
+  return unreadCount;
+};
 

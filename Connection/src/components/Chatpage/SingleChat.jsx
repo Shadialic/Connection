@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Typography, IconButton, Grid } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useChatState } from "../../context/ChatProvider";
@@ -81,7 +81,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
       };
     }
   }, [socket, selectedChatCompare]);
-
+ 
   const fetchMessages = async () => {
     if (!selectedChat) return;
     try {

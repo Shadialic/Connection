@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -45,7 +45,7 @@ function NavBar() {
   const handleNotificationsClose = () => {
     setAnchorElNotifications(null);
   };
-
+ 
   function notificationsLabel(count) {
     if (count === 0) {
       return "no notifications";
@@ -66,8 +66,8 @@ function NavBar() {
   };
 
   return (
-    <div className="w-full">
-      <div className="h-16 shadow-md flex justify-between items-center px-4">
+    <div className="w-full   ">
+      <div className="h-16 shadow-md flex justify-between items-center px-4 hidescroll">
         {selectedChat && (
           <Avatar
             src={getSenderImage(user, selectedChat.participants)}
@@ -136,7 +136,7 @@ function NavBar() {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+              <Avatar sx={{ width: 32, height: 32 }}> {user.userName.charAt(0)}</Avatar>
             </IconButton>
           </Tooltip>
           <Menu
