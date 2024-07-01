@@ -4,7 +4,8 @@ import User from "../model/userModel.js";
 import { Op } from 'sequelize';
 const sendMessae = async (req, res) => {
   try {
-    const { content, chatId } = req.body;
+    const { content, chatId ,file} = req.body;
+    console.log(req.body,'req.body');
     if (!content || !chatId) {
       console.log("Invalid Data");
       res.json({ message: "Invalid data passed" });
@@ -15,6 +16,7 @@ const sendMessae = async (req, res) => {
       senderId: req.userId,
       content: content,
       chatId: chatId,
+      file:file
     };
     const message = await Message.create(newMessage);
 

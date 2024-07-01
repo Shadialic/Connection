@@ -14,6 +14,9 @@ const Message = sequelize.define('Message', {
       key: 'id'
     }
   },
+  file: {
+    type: DataTypes.STRING,
+  },
   chatId: {
     type: DataTypes.INTEGER,
     references: {
