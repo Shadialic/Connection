@@ -54,8 +54,8 @@ function SignupForm() {
         alt=""
         className="absolute w-full h-full object-cover z-0"
       />
-      <div className="w-[85%] h-[88%] bg-[#fff] rounded-3xl flex justify-center items-center shadow-lg relative z-10 p-8">
-        <div className="flex flex-col justify-center gap-2 items-center w-1/2 h-full">
+      <div className="w-full md:w-[85%] h-[88%] bg-[#fff] rounded-3xl flex justify-center items-center shadow-lg relative z-10 p-8">
+        <div className="flex flex-col justify-center gap-2 items-center w-full sm:w-1/2 h-full">
           <img src={user} alt="" className="w-32" />
           <h1>Create your new Account</h1>
           <form
@@ -65,7 +65,7 @@ function SignupForm() {
             <input
               type="text"
               id="name"
-              className="outline-none border-2 h-10 w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
+              className="outline-none border-2 h-10 w-[90%] md:w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
               placeholder="UserName"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
@@ -73,7 +73,7 @@ function SignupForm() {
             <input
               type="text"
               id="email"
-              className="outline-none border-2 h-10 w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
+              className="outline-none border-2 h-10 w-[90%] md:w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -81,7 +81,7 @@ function SignupForm() {
             <input
               type="password"
               id="password"
-              className="outline-none border-2 h-10 w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
+              className="outline-none border-2 h-10 w-[90%] md:w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -89,20 +89,20 @@ function SignupForm() {
             <input
               type="file"
               id="image"
-              className="outline-none border-2 h-10 w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3 py-1"
+              className="outline-none border-2 h-10 w-[90%] sm:w-[90%] md:w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3 py-1"
               onChange={(e) => setImage(e.target.files[0])}
             />
             <div className="flex justify-center w-full gap-10">
               <button
                 type="submit"
-                className="h-9 w-[18%] rounded-full  bg-[#8338ec] text-white "
+                className="h-9 w-[25%] sm:w-[28%] rounded-full  bg-[#8338ec] text-white "
               >
                 Sign Up
               </button>
               <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="h-9 w-[18%] p-1 text-[#8338ec] border-2 border-[#8338ec]  rounded-full "
+                className="h-9 w-[25%] sm:w-[28%] p-1 text-[#8338ec] border-2 border-[#8338ec]  rounded-full "
               >
                 Sign In
               </button>
@@ -110,7 +110,7 @@ function SignupForm() {
           </form>
           <h1 className="text-sm text-[#d8ddde]">OR LOGIN WITH</h1>
         </div>
-        <div className="flex justify-center items-center w-1/2 h-full">
+        <div className="hidden md:flex justify-center items-center  md:w-1/2 h-full">
           <img src={login} alt="" className="w-[70%] h-[90%] object-contain" />
         </div>
       </div>

@@ -74,14 +74,7 @@ function GroupchatModal({ open, handleClose }) {
     } else if (selectedUsers.length < 2) {
       toast.error("Add at least two members");
     } else {
-      // const formData = new FormData();
-      // formData.append("groupName", groupName);
-      // formData.append("selectedUsers", JSON.stringify(selectedUsers));
-      // formData.append("groupImage", groupImage);
-      // console.log(formData, 'formData');
-      console.log(groupImage, "groupImage");
-      // const data=uploadToCloudinary(groupImage)
-      // console.log(data,'imagessss');
+     
       const response = await CreateGroup({
         chatName: groupName,
         users: JSON.stringify(selectedUsers),

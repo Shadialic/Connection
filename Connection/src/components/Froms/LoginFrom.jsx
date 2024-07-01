@@ -48,7 +48,7 @@ function LoginForm() {
       toast(userData.alert);
       localStorage.setItem("token", userData.token);
       if (userData.status && userData.token) {
-        navigate("/chat");
+        navigate("/chats");
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -61,7 +61,7 @@ function LoginForm() {
       <img
         src={bg}
         alt=""
-        className=" sm:absolute w-full h-full object-cover z-0 "
+        className=" absolute w-full h-full object-cover z-0 "
       />
       <div className="w-full sm:w-[85%] h-[88%] bg-[#fff] rounded-3xl flex justify-center items-center shadow-lg relative z-10 p-8">
         <div className="flex w-full h-[90%] shadow-xl">
@@ -101,14 +101,14 @@ function LoginForm() {
               <div className="flex justify-center w-full gap-10">
                 <button
                   type="submit"
-                  className="h-9 w-[18%] p-1 bg-[#8338ec] rounded-full text-white "
+                  className="h-9 w-[25%] sm:w-[28%] p-1 bg-[#8338ec] rounded-full text-white "
                 >
                   Sign In
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate("/signup")}
-                  className="h-9 w-[18%] text-[#8338ec] border-2 border-[#8338ec] rounded-full"
+                  className="h-9 w-[25%] sm:w-[28%] text-[#8338ec] border-2 border-[#8338ec] rounded-full"
                 >
                   Sign Up
                 </button>

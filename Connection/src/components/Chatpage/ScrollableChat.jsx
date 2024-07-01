@@ -38,8 +38,11 @@ function ScrollableChat({ messages }) {
                   m.sender.id === user.id
                     ? "bg-[#8338ec] text-white"
                     : "bg-gray-100 text-black"
-                }`}
+                }
+                ${m.file && "flex flex-col "}
+                `}
               >
+                {m.file && <img src={m.file} alt="" className="w-36  " />}
                 <p className="">{m.content}</p>
                 <span className="flex justify-end items-end text-[10px] font-prompt-light pt-2 ">
                   {TimeMange(m.createdAt) == "NaN years ago"
@@ -49,7 +52,7 @@ function ScrollableChat({ messages }) {
               </div>
             </div>
           ))}
-           <div ref={scroll}></div>
+        <div ref={scroll}></div>
       </ScrollableFeed>
     </div>
   );

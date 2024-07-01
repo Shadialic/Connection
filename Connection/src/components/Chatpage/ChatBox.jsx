@@ -3,17 +3,17 @@ import { useChatState } from "../../context/ChatProvider";
 import NavBar from "../Layouts/NavBar";
 import { Box } from "@mui/material";
 import SingleChat from "./SingleChat";
+
 function ChatBox({ fetchAgain, setFetchAgain }) {
-
-
+  const {selectedChat}=useChatState()
   return (
     <>
-      <div className="flex flex-col w-full h-full">
+      <Box className="flex flex-col w-full h-full">
         <NavBar />
-        <Box className='w-full h-3/4'>
+        <Box className="w-full h-3/4">
           <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         </Box>
-      </div>
+      </Box>
     </>
   );
 }

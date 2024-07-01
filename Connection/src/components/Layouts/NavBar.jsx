@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -14,13 +14,14 @@ import Badge from "@mui/material/Badge";
 import { getSender, getSenderImage } from "../../config/ChatLogics";
 
 function NavBar() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [openProfile, setOpenProfile] = React.useState(false);
+  const [openGroup, setOpenGroup] = useState(false);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openProfile, setOpenProfile] = useState(false);
   const [anchorElNotifications, setAnchorElNotifications] = useState(null);
   const { selectedChat, setSelectedChat, user, notification, setNotification } =
     useChatState();
   const navigate = useNavigate();
-  console.log(selectedChat, "selectedChat");
 
   const open = Boolean(anchorEl);
   const notificationsOpen = Boolean(anchorElNotifications);
@@ -28,6 +29,7 @@ function NavBar() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
 
   const handleNotificationsClick = (event) => {
     setAnchorElNotifications(event.currentTarget);
@@ -45,7 +47,7 @@ function NavBar() {
   const handleNotificationsClose = () => {
     setAnchorElNotifications(null);
   };
- 
+
   function notificationsLabel(count) {
     if (count === 0) {
       return "no notifications";
@@ -55,7 +57,13 @@ function NavBar() {
     }
     return `${count} notifications`;
   }
+ const handleCloseGroup = () => {
+  setOpenGroup(false);
+  };
 
+  const handleOpenGroup = () => {
+    setOpenProfile(true);
+  };
   const handleOpenProfile = () => {
     setOpenProfile(true);
     handleClose();
@@ -66,8 +74,8 @@ function NavBar() {
   };
 
   return (
-    <div className="w-full   ">
-      <div className="h-16 shadow-md flex justify-between items-center px-4 hidescroll">
+    <div className="w-full">
+      <div className="h-16 w-[66%]  shadow-md flex justify-between items-center px-4 fixed top-0  right-0 bg-white z-50">
         {selectedChat && (
           <Avatar
             src={getSenderImage(user, selectedChat.participants)}
@@ -136,7 +144,9 @@ function NavBar() {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar sx={{ width: 32, height: 32 }}> {user.userName.charAt(0)}</Avatar>
+              <Avatar sx={{ width: 32, height: 32 }}>
+                {user.userName.charAt(0)}
+              </Avatar>
             </IconButton>
           </Tooltip>
           <Menu

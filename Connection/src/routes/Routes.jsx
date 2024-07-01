@@ -6,19 +6,17 @@ import SignupPage from '../pages/UserPages/Signup/SignupPage';
 import ChatPage from '../pages/UserPages/Chat/ChatPage';
 import Otp from '../components/Authentication/OtpPage';
 import UserProtect from './protectRoute/UserProtect';
+import UserPublic from './protectRoute/UserPublic';
 
 
 function UserRoutes() {
   return (
     <div>
         <Routes>
-            <Route path='/' element={<Home/>}/>
-            <Route path='/otp' element={<Otp/>}/>
-
+            <Route path='/otp' element={<UserPublic><Otp/></UserPublic>}/>
             <Route path='/chats' element={<UserProtect><ChatPage/> </UserProtect> }/>
-
-            <Route path='/login' element={<UserLogin/>}/>
-            <Route path='/signup' element={<SignupPage/>}/>
+            <Route path='/login' element={<UserPublic><UserLogin/></UserPublic>}/>
+            <Route path='/signup' element={<UserPublic><SignupPage/></UserPublic>}/>
         </Routes>
 
     </div>
