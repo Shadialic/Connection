@@ -215,7 +215,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
         <>
           <Box
             sx={{
-              display: "flex",  
+              display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               width: "100%",
@@ -225,8 +225,8 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
               fontSize: { xs: "28px", md: "30px" },
             }}
           >
-        {/* <ArrowBackIcon sx={{ fontSize: 40, color: 'black' }} /> */}
-        <IconButton
+            {/* <ArrowBackIcon sx={{ fontSize: 40, color: 'black' }} /> */}
+            <IconButton
               d={{ base: "flex", md: "none" }}
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat("")}
@@ -265,7 +265,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
             </div>
           ) : (
             <>
-              <ScrollableChat messages={messages} />
+              <ScrollableChat messages={messages}  fetchMessages={fetchMessages}  />
               {isTyping ? (
                 <div>
                   <Lottie options={defaultOptions} width={70} />
@@ -297,7 +297,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                             backgroundColor="#FF4081"
                           />
                         ) : (
-                          <form className="w-[65%]" onSubmit={sendMessage}>
+                          <form className="w-[90%] sm:w-[65%]" onSubmit={sendMessage}>
                             <label htmlFor="chat" className="sr-only">
                               Your message
                             </label>
@@ -359,7 +359,6 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                         )}
                       </Grid>
                     </Grid>
-
                   </div>
                 </>
               )}

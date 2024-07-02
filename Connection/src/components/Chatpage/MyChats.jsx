@@ -64,7 +64,7 @@ function MyChats({ fetchAgain }) {
       padding={2}
       borderRadius="lg"
       borderWidth="1px"
-      className="w-full h-full border-r-2"
+      className={`w-full h-full border-r-2 ${selectedChat && "hidden"}`}
     >
       <Box
         display="flex"
@@ -85,26 +85,13 @@ function MyChats({ fetchAgain }) {
           >
             My Chats
           </Typography>
-          {/* <Button
-            onClick={handleOpenProfile}
-            variant="contained"
-            color="primary"
-          >
-            Create New Group
-          </Button> */}
         </Box>
+
         <TextField
-          className="w-full"
-          fullWidth
-          variant="outlined"
-          placeholder="Search Users"
-          InputProps={{
-            endAdornment: (
-              <IconButton>
-                <SearchOutlined />
-              </IconButton>
-            ),
-          }}
+          id="standard-basic"
+          label="serach users"
+          variant="standard"
+          className="border-[#76949f]"
         />
       </Box>
       <Box
@@ -118,70 +105,72 @@ function MyChats({ fetchAgain }) {
       >
         {Chats ? (
           Chats.map((chat) => (
-            <div
-              key={chat.id}
-              className={`py-3 px-5  ${
-                selectedChat === chat
-                  ? "bg-[#8338ec] text-white"
-                  : "bg-white text-black"
-              } hover:bg-[#8338ec] hover:text-[#fff] rounded-md`}
-              onClick={() => {
-                setSelectedChat(chat);
-                setNotification(
-                  notification.filter((n) => n.chatId !== chat.id)
-                );
-              }}
-            >
-              <div class="divide-y divide-gray-200">
-                {/* <button class="w-full text-left py-2 focus:outline-none focus-visible:bg-indigo-50"> */}
-                <div className="flex items-center">
-                  <Avatar
-                    className="rounded-full items-start flex-shrink-0 mr-3"
-                    src={
-                      chat.isGroupChat
-                        ? chat.groupImage
-                        : getSenderImage(loggerUser, chat.participants)
-                    }
-                    width="32"
-                    height="32"
-                    alt="Marie Zulfikar"
-                  />
-                  <div className="w-full">
-                    <h1 className="text-lg  ">
-                      {!chat.isGroupChat
-                        ? getSender(loggerUser, chat.participants)
-                        : chat.chatName}{" "}
-                      <span className="w-full flex justify-end items-end pr-2">
-                        <Badge
-                          badgeContent={getNotificationCount(
-                            chat,
-                            notification,
-                            loggerUser
-                          )}
-                          color="primary"
-                        />{" "}
-                      </span>
-                    </h1>
+            <>
+              <div
+                key={chat.id}
+                className={`py-3 px-5  ${
+                  selectedChat === chat
+                    ? "bg-[#8338ec] text-white"
+                    : "bg-white text-black"
+                } hover:bg-[#8338ec] hover:text-[#fff] rounded-md`}
+                onClick={() => {
+                  setSelectedChat(chat);
+                  setNotification(
+                    notification.filter((n) => n.chatId !== chat.id)
+                  );
+                }}
+              >
+                <div class="divide-y divide-gray-200">
+                  <div className="flex items-center">
+                    <Avatar
+                      className="rounded-full items-start flex-shrink-0 mr-3"
+                      src={
+                        chat.isGroupChat
+                          ? chat.groupImage
+                          : getSenderImage(loggerUser, chat.participants)
+                      }
+                      width="32"
+                      height="32"
+                      alt="Marie Zulfikar"
+                    />
+                    <div className="w-full">
+                      <h1 className="text-lg  ">
+                        {!chat.isGroupChat
+                          ? getSender(loggerUser, chat.participants)
+                          : chat.chatName}{" "}
+                        <span className="w-full flex justify-end items-end pr-2">
+                          <Badge
+                            badgeContent={getNotificationCount(
+                              chat,
+                              notification,
+                              loggerUser
+                            )}
+                            color="primary"
+                          />{" "}
+                        </span>
+                      </h1>
 
-                    <div className="text-[11px]">
-                      {" "}
-                      {chat.latestMessage && (
-                        <>
-                          <b>
-                            {chat.isGroupChat &&
-                              chat.latestMessage.sender.userName}
-                          </b>{" "}
-                          {chat.latestMessage.content.length > 50
-                            ? chat.latestMessage.content.substring(0, 51) +
-                              "..."
-                            : chat.latestMessage.content}
-                        </>
-                      )}
+                      <div className="text-[11px]">
+                        {" "}
+                        {chat.latestMessage && (
+                          <>
+                            <b>
+                              {chat.isGroupChat &&
+                                chat.latestMessage.sender.userName}
+                            </b>{" "}
+                            {chat.latestMessage.content.length > 50
+                              ? chat.latestMessage.content.substring(0, 51) +
+                                "..."
+                              : chat.latestMessage.content}
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+              <div className="w-full border-b-2 border-gray-200"></div>
+            </>
           ))
         ) : (
           <ChatLoading />

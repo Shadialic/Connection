@@ -75,7 +75,7 @@ function NavBar() {
 
   return (
     <div className="w-full">
-      <div className="h-16 w-[66%]  shadow-md flex justify-between items-center px-4 fixed top-0  right-0 bg-white z-50">
+      <div className="h-16 w-[89%] sm:w-[66%]  shadow-md flex justify-between items-center px-4 fixed top-0  right-0 bg-white z-50">
         {selectedChat && (
           <Avatar
             src={getSenderImage(user, selectedChat.participants)}

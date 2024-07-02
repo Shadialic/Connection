@@ -1,21 +1,22 @@
 import React, { useState } from "react";
-import login from "../../../public/signup.jpg";
-import bg from "../../../public/bglogin.webp";
-import user from "../../../public/user.svg";
 import { useNavigate } from "react-router-dom";
 import { LoginData } from "../../api/UserApi";
 import toast, { Toaster } from "react-hot-toast";
 import { useGoogleLogin } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc";
+import lganime from "../../assets/video/login.mp4";
 
 function LoginForm() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  // const GoogleLogin = useGoogleLogin({
-  //   onSuccess: (codeResponse) => setUser(codeResponse),
-  //   onError: () => toast.error("Goole login failed"),
-  // });
+
+  const GoogleLogin = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: () => toast.error("Google login failed"),
+  });
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,10 +26,12 @@ function LoginForm() {
       [id]: value,
     }));
   };
+
   const validateEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const trimmedEmail = formData.email.trim();
@@ -52,70 +55,77 @@ function LoginForm() {
       }
     } catch (error) {
       console.error("Error during login:", error);
-      alert("Login failed. Please try again.");
+      toast.error("Login failed. Please try again.");
     }
   };
 
   return (
-    <div className="w-screen h-screen bg-[#caf0f8] flex justify-center items-center relative">
-      <img
-        src={bg}
-        alt=""
-        className=" absolute w-full h-full object-cover z-0 "
-      />
-      <div className="w-full sm:w-[85%] h-[88%] bg-[#fff] rounded-3xl flex justify-center items-center shadow-lg relative z-10 p-8">
-        <div className="flex w-full h-[90%] shadow-xl">
-          <div className="hidden sm:flex justify-center items-center w-1/2 h-full">
-            <img
-              src={login}
-              alt=""
-              className="w-full sm:w-[90%] h-[90%] object-contain"
+    <div className="w-full h-screen flex flex-row items-start justify-start">
+      <h1 className="absolute font-extrabold p-6 text-4xl text-white">
+        Connections
+      </h1>
+      <video
+        src={lganime}
+        loop
+        autoPlay
+        muted
+        className="h-full w-[30%] object-cover"
+      ></video>
+      <div className="w-full mt-[4rem]">
+        <div className="flex flex-col gap-6">
+          <h1 className="text-black text-2xl font-bold ml-[10rem]">
+            Sign in to Connections
+          </h1>
+          <div
+            className="flex flex-row items-center gap-2 ml-[10rem] border-2 border-gray-200 w-[22rem] justify-center p-3 rounded-full cursor-pointer"
+            onClick={GoogleLogin}
+          >
+            <FcGoogle className="w-5 h-5" />
+            <button className="font-semibold text-lg">
+              Sign in with Google
+            </button>
+          </div>
+          <span className="flex flex-row items-center ml-[10rem]">
+            <div className="w-24 border-b-2 border-gray-200"></div>
+            <span className="px-4 text-gray-500">or sign in with email</span>
+            <div className="w-24 border-b-2 border-gray-200"></div>
+          </span>
+          <div className="flex flex-col ml-[10rem] gap-2">
+            <label htmlFor="email" className="font-semibold">
+              Email
+            </label>
+            <input
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              type="text"
+              className="border-2 border-gray-200 w-[22rem] justify-center p-3 rounded-xl"
+            />
+            <label htmlFor="password" className="font-semibold">
+              Password
+            </label>
+            <input
+              id="password"
+              value={formData.password}
+              onChange={handleChange}
+              type="password"
+              className="border-2 border-gray-200 w-[22rem] justify-center p-3 rounded-xl"
             />
           </div>
-          <div className="flex flex-col justify-center gap-2 items-center w-full sm:w-1/2 h-full">
-            <img src={user} alt="" className="w-32" />
-            <h1>Sign in to your Account</h1>
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col p-2 justify-center items-center gap-4 w-full"
+          <div className="flex items-center gap-2 ml-[10rem] bg-[#82c0cc] border-2 hover:border-gray-500 w-[22rem] justify-center p-2 rounded-full">
+            <button
+              className="w-[22rem] justify-center p-3 rounded-xl text-white font-bold"
+              onClick={handleSubmit}
             >
-              <input
-                type="text"
-                id="email"
-                className="outline-none border-2 h-10 w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-              <input
-                type="password"
-                id="password"
-                className="outline-none border-2 h-10 w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-              <a className="text-[14px] text-[#0077b6] pr-2">
-                Forgot Password?
-              </a>
-              <div className="flex justify-center w-full gap-10">
-                <button
-                  type="submit"
-                  className="h-9 w-[25%] sm:w-[28%] p-1 bg-[#8338ec] rounded-full text-white "
-                >
-                  Sign In
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/signup")}
-                  className="h-9 w-[25%] sm:w-[28%] text-[#8338ec] border-2 border-[#8338ec] rounded-full"
-                >
-                  Sign Up
-                </button>
-              </div>
-            </form>
-            <h1 className="text-sm text-[#d8ddde]">OR LOGIN WITH</h1>
+              Sign In
+            </button>
           </div>
+          <span className="ml-[14rem]">
+            Don't have an account?{" "}
+            <button className="underline" onClick={() => navigate("/signup")}>
+              Sign Up
+            </button>
+          </span>
         </div>
       </div>
       <Toaster />

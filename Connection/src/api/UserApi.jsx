@@ -163,5 +163,27 @@ export async function getAllMessages(chatId) {
     throw err;
   }
 }
+export async function DeleteMessage(id) {
+  try {
+    const response = await UserApi.put(`/messages/delete/${id}`);
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Error in UserData:", err);
+    throw err;
+  }
+}
+export async function EditingMessage(data) {
+  try {
+    const response = await UserApi.put(`/messages/edit`,{data});
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Error in UserData:", err);
+    throw err;
+  }
+}
+
+
 
 

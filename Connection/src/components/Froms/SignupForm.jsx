@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import login from "../../../public/loginpage.jpg";
-import bg from "../../../public/bglogin.webp";
-import user from "../../../public/user.svg";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { UserData } from "../../api/UserApi";
+import { FcGoogle } from "react-icons/fc";
+import sganime from "../../assets/video/Sloop.mp4";
 
 function SignupForm() {
   const navigate = useNavigate();
@@ -35,83 +34,107 @@ function SignupForm() {
       toast.error("Password must be at least 6 characters long");
       return;
     }
-    const userData = await UserData(
-      {
-        userName: userName,
-        email: email,
-        password: password,
-      },
-      image
-    );
-    toast(userData.message);
-     navigate("/otp",{state:userData.userData});
+    try {
+      const userData = await UserData(
+        {
+          userName: trimmedUserName,
+          email: trimmedEmail,
+          password: trimmedPassword,
+        },
+        image
+      );
+      toast(userData.message);
+      navigate("/otp", { state: userData.userData });
+    } catch (error) {
+      console.error("Error during signup:", error);
+      toast.error("Signup failed. Please try again.");
+    }
   };
 
   return (
-    <div className="w-screen h-screen bg-[#caf0f8] flex justify-center items-center relative">
-      <img
-        src={bg}
-        alt=""
-        className="absolute w-full h-full object-cover z-0"
-      />
-      <div className="w-full md:w-[85%] h-[88%] bg-[#fff] rounded-3xl flex justify-center items-center shadow-lg relative z-10 p-8">
-        <div className="flex flex-col justify-center gap-2 items-center w-full sm:w-1/2 h-full">
-          <img src={user} alt="" className="w-32" />
-          <h1>Create your new Account</h1>
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col p-2 justify-center items-center gap-4 w-full"
-          >
+    <div className="w-full h-screen flex flex-row items-start justify-start">
+      <h1 className="absolute font-extrabold p-6 text-4xl text-white">
+        Connections
+      </h1>
+      <video
+        src={sganime}
+        loop
+        autoPlay
+        muted
+        className="h-full w-[30%] object-cover"
+      ></video>
+      <div className="w-full mt-[1rem]">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-black text-2xl font-bold ml-[10rem]">
+            Sign up to Connections
+          </h1>
+          <div className="flex flex-row items-center gap-2 ml-[10rem] border-2 border-gray-200 w-[22rem] justify-center p-3 rounded-full cursor-pointer">
+            <FcGoogle className="w-5 h-5" />
+            <button className="font-semibold">Sign up with Google</button>
+          </div>
+          <span className="flex flex-row items-center ml-[10rem]">
+            <div className="w-24 border-b-2 border-gray-200"></div>
+            <span className="px-4 text-gray-500">or sign up with email</span>
+            <div className="w-24 border-b-2 border-gray-200"></div>
+          </span>
+          <div className="flex flex-col ml-[10rem] gap-2">
+            <label htmlFor="username" className="font-semibold">
+              Username
+            </label>
             <input
+              id="username"
               type="text"
-              id="name"
-              className="outline-none border-2 h-10 w-[90%] md:w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
-              placeholder="UserName"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
+              className="border-2 border-gray-200 w-[22rem] justify-center p-3 rounded-xl"
             />
+            <label htmlFor="email" className="font-semibold">
+              Email
+            </label>
             <input
-              type="text"
               id="email"
-              className="outline-none border-2 h-10 w-[90%] md:w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
-              placeholder="Email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="border-2 border-gray-200 w-[22rem] justify-center p-3 rounded-xl"
             />
+            <label htmlFor="password" className="font-semibold">
+              Password
+            </label>
             <input
-              type="password"
               id="password"
-              className="outline-none border-2 h-10 w-[90%] md:w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3"
-              placeholder="Password"
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="border-2 border-gray-200 w-[22rem] justify-center p-3 rounded-xl"
             />
-            <input
-              type="file"
-              id="image"
-              className="outline-none border-2 h-10 w-[90%] sm:w-[90%] md:w-[70%] border-[#d8ddde] rounded-full text-[14px] pl-3 py-1"
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-            <div className="flex justify-center w-full gap-10">
-              <button
-                type="submit"
-                className="h-9 w-[25%] sm:w-[28%] rounded-full  bg-[#8338ec] text-white "
-              >
-                Sign Up
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate("/login")}
-                className="h-9 w-[25%] sm:w-[28%] p-1 text-[#8338ec] border-2 border-[#8338ec]  rounded-full "
-              >
-                Sign In
-              </button>
+            <div className="border-2 border-gray-200 w-[22rem] outline-none justify-center p-3 mt-1 rounded-xl text-center">
+              <label htmlFor="image" className="cursor-pointer">
+                {image ? <>{image.name}</> : "Upload Image"}
+              </label>
+              <input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImage(e.target.files[0])}
+                style={{ display: "none" }}
+              />
             </div>
-          </form>
-          <h1 className="text-sm text-[#d8ddde]">OR LOGIN WITH</h1>
-        </div>
-        <div className="hidden md:flex justify-center items-center  md:w-1/2 h-full">
-          <img src={login} alt="" className="w-[70%] h-[90%] object-contain" />
+          </div>
+          <div className="flex items-center gap-2 ml-[10rem] bg-[#76949f] border-2 hover:border-gray-500 w-[22rem] justify-center p-2 rounded-full">
+            <button
+              onClick={handleSubmit}
+              className="w-[22rem] justify-center p-3 rounded-xl text-white font-bold"
+            >
+              Sign up
+            </button>
+          </div>
+          <span className="ml-[14rem]">
+            Already have an account?{" "}
+            <button className="underline" onClick={() => navigate("/login")}>
+              Sign In
+            </button>
+          </span>
         </div>
       </div>
       <Toaster />
