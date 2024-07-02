@@ -1,53 +1,104 @@
 import UserDb from "../model/userModel.js";
-import OTP from '../model/otpModel.js'
+import OTP from "../model/otpModel.js";
 import bcrypt from "bcryptjs";
 import { createSecretToken } from "../utils/Jwt/secretoken..js";
 import { Sequelize } from "sequelize";
 import otpGenerator from "otp-generator";
 import { uploadToCloudinary } from "../utils/Cloudnery/cloudnery.js";
-// const LoadUser = async (req, res) => {
-//     try {
-//       // const result = await pool.query('SELECT * FROM users');
-//       res.json(result.rows);
-//     } catch (err) {
-//       console.error(err.message);
-//       res.status(500).send('Server error');
-//     }
-//   };
-const getAllUsers=async(req,res)=>{
-  try{
+
+const getAllUsers = async (req, res) => {
+  try {
     const allUsers = await UserDb.findAll();
-    console.log(allUsers,'allUsers');
-    res.json(allUsers)
-  }catch(err){
+    res.json(allUsers);
+  } catch (err) {
     console.log(err);
   }
-}
+};
 
 const postUser = async (req, res) => {
   try {
     const { userName, email, password } = req.body;
-
     if (!userName || !email || !password) {
       return res.status(400).send("All fields are required");
     }
-
     const exist = await UserDb.findOne({
       where: { email: email },
     });
-
     if (exist) {
       return res.json({ message: "Email already exists" });
     }
-
     await sendOTP(email);
-   
-    return res.status(200).json({ message: "OTP sent successfully",
-      userData: { userName, email, password, image: req.file ? req.file.path : null },
-     });
+    return res.status(200).json({
+      message: "OTP sent successfully",
+      userData: {
+        userName,
+        email,
+        password,
+        image: req.file ? req.file.path : null,
+      },
+    });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
+  }
+};
+
+const googleRegistration = async (req, res) => {
+  try {
+    const { id, name, email, picture } = req.body;
+    const data = await UserDb.findOne({
+      where: { email: email },
+    });
+    if (!data) {
+      const hashedPassword = await bcrypt.hash(id, 10);
+      const googleUser = await UserDb.create({
+        userName: name,
+        email,
+        password: hashedPassword,
+        picture: picture,
+        is_google: true,
+        is_Active: true,
+      });
+      if (googleUser) {
+        const token = createSecretToken(
+          exist.id,
+          exist.userName,
+          exist.email,
+          exist.picture
+        );
+        res.status(200).json({
+          userData: exist,
+          status: true,
+          err: null,
+          token,
+        });
+      }
+      if (token) {
+        return res.status(200).json({
+          created: true,
+          message: "Google registration successful",
+          token,
+          userData,
+        });
+      }
+    } else {
+      const token = createSecretToken(
+        data.id,
+        data.userName,
+        data.email,
+        data.picture
+      );
+      if (token) {
+        return res.status(200).json({
+          created: true,
+          message: "Google registration successful",
+          token,
+          data,
+        });
+      }
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -76,31 +127,24 @@ const sendOTP = async (email) => {
 
 const otpVerification = async (req, res) => {
   try {
-    const { finalValue} = req.body;
-    console.log(finalValue,'finalValue');
-    const {userName, email, password,image }=req.body.userData;
-   
+    const { finalValue } = req.body;
+    const { userName, email, password, image } = req.body.userData;
     const otp = finalValue;
-
     if (!otp) {
       return res.json({ status: false, message: "OTP is required" });
     }
-
     const checkUserPresent = await OTP.findOne({ where: { otp: otp } });
-    console.log(checkUserPresent,'checkUserPresent');
-
-
     if (checkUserPresent) {
       const currentTime = new Date();
       const otpCreationTime = new Date(checkUserPresent.createdAt);
-      const timeDifference = (currentTime - otpCreationTime) / 1000; 
+      const timeDifference = (currentTime - otpCreationTime) / 1000;
       if (timeDifference > 90) {
         return res.json({ status: false, message: "OTP has expired" });
       }
-
-      const user = await UserDb.findOne({ where: { email: checkUserPresent.email } });
-      const imgUrl=await uploadToCloudinary(image,"profile")
-      console.log(imgUrl,'imgUrl');
+      const user = await UserDb.findOne({
+        where: { email: checkUserPresent.email },
+      });
+      const imgUrl = await uploadToCloudinary(image, "profile");
       if (!user) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await UserDb.create({
@@ -109,7 +153,6 @@ const otpVerification = async (req, res) => {
           password: hashedPassword,
           picture: imgUrl.url || undefined,
         });
-
         return res.status(200).json({
           success: true,
           alert: "User Activated successfully",
@@ -124,16 +167,16 @@ const otpVerification = async (req, res) => {
     }
   } catch (error) {
     console.error("Error while checking for user:", error);
-    return res.status(500).json({ status: false, message: "Server error", error: error.message });
+    return res
+      .status(500)
+      .json({ status: false, message: "Server error", error: error.message });
   }
 };
-
-
 
 const LoadUser = async (req, res) => {
   try {
     console.log(req.body);
-    const k= await UserDb.findAll();
+    const k = await UserDb.findAll();
     const { email, password } = req.body.formData;
     const exist = await UserDb.findOne({
       where: { email },
@@ -171,7 +214,6 @@ const LoadUser = async (req, res) => {
 
 const searchUsers = async (req, res) => {
   try {
-    console.log(req.userId,'req.userId');
     const searchQuery = req.query.search;
     const whereClause = searchQuery
       ? {
@@ -182,7 +224,7 @@ const searchUsers = async (req, res) => {
           id: { [Sequelize.Op.ne]: req.userId },
         }
       : {
-          id: { [Sequelize.Op.ne]: req.userId},
+          id: { [Sequelize.Op.ne]: req.userId },
         };
     const users = await UserDb.findAll({
       where: whereClause,
@@ -195,5 +237,11 @@ const searchUsers = async (req, res) => {
   }
 };
 
-// Export the functions
-export { postUser, LoadUser, getAllUsers,otpVerification,searchUsers };
+export {
+  postUser,
+  LoadUser,
+  googleRegistration,
+  getAllUsers,
+  otpVerification,
+  searchUsers,
+};

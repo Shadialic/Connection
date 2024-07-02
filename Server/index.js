@@ -13,9 +13,7 @@ import messageRouter from "./routes/messageRoute.js";
 import { Server } from "socket.io";
 
 dotenv.config();
-
 const app = express();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -25,7 +23,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 app.use(express.urlencoded({ extended: true }));
-
 app.use(
   cors({
     origin: process.env.URL,
@@ -33,7 +30,6 @@ app.use(
     methods: "*",
   })
 );
-
 sequelize
   .sync()
   .then(() => {
@@ -64,25 +60,20 @@ io.on("connection", (socket) => {
     socket.join(userData.id);
     socket.emit("connected");
   });
-
   socket.on("join chat", (room) => {
     socket.join(room);
   });
   socket.on("typing", (room) => socket.in(room).emit("typing"));
   socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
-
   socket.on("new message", (newMessageReceived) => {
     const chat = newMessageReceived.chat;
-
     if (!chat.users) return console.log("Chat users not defined");
-
     chat.users.forEach((user) => {
       if (user !== newMessageReceived.sender.id) {
         socket.to(user).emit("message received", newMessageReceived);
       }
     });
   });
-
   socket.on("disconnect", () => {
     console.log(`User with socket ID: ${socket.id} disconnected`);
   });
