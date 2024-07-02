@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { TextField, IconButton, Badge } from "@material-ui/core";
+import TextField from '@mui/material/TextField';
+import Badge from '@mui/material/Badge';
 import toast, { Toaster } from "react-hot-toast";
 import { jwtDecode } from "jwt-decode";
-import { SearchOutlined } from "@material-ui/icons";
 import { useChatState } from "../../context/ChatProvider";
 import { fetchingChats } from "../../api/UserApi";
 import Box from "@mui/material/Box";
-import { Avatar, Button, Typography } from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import ChatLoading from "./ChatLoading";
 import {
   getNotificationCount,
@@ -21,7 +21,6 @@ function MyChats({ fetchAgain }) {
     setSelectedChat,
     Chats,
     setChats,
-    user,
     notification,
     setNotification,
   } = useChatState();

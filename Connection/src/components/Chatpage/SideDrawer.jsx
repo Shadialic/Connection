@@ -17,11 +17,11 @@ import { useChatState } from "../../context/ChatProvider";
 import toast, { Toaster } from "react-hot-toast";
 import { Avatar } from "@mui/material";
 
-function SideDrawer({ toggleDrawer }) {
+function SideDrawer() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState();
   const [loading, setLoading] = useState(false);
-  const { selectedChat, setSelectedChat, Chats, setChats } = useChatState();
+  const {setSelectedChat, Chats, setChats } = useChatState();
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);

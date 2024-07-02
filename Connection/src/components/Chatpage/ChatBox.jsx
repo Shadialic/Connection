@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useChatState } from "../../context/ChatProvider";
+import React from "react";
 import NavBar from "../Layouts/NavBar";
 import { Box } from "@mui/material";
 import SingleChat from "./SingleChat";
