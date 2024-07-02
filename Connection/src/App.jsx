@@ -1,5 +1,5 @@
 import React from "react";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import UserRoutes from "./routes/Routes";
@@ -8,14 +8,14 @@ function App() {
   const theme = createTheme({
     palette: {
       primary: {
-        main: '#3f51b5',
+        main: "#3f51b5",
       },
       secondary: {
-        main: '#f50057',
+        main: "#f50057",
       },
     },
     typography: {
-      fontFamily: 'Roboto, sans-serif',
+      fontFamily: "Roboto, sans-serif",
     },
   });
 

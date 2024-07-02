@@ -15,12 +15,20 @@ function ChatPage() {
           <Sidebar fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         )}
       </div>
-      <div className={`w-full md:w-[45%] max-h-svh overflow-auto hidescroll ${selectedChat ? 'hidden sm:block' : ''}`}>
+      <div
+        className={`w-full md:w-[45%] max-h-svh overflow-auto hidescroll ${
+          selectedChat ? "hidden sm:block" : ""
+        }`}
+      >
         {user && (
           <MyChats fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         )}
       </div>
-      <div className={`w-full md:block max-h-svh overflow-auto hidescroll ${selectedChat ? 'block' : 'hidden sm:hidden'}`}>
+      <div
+        className={`w-full md:block max-h-svh overflow-auto hidescroll ${
+          selectedChat ? "block" : "hidden sm:hidden"
+        }`}
+      >
         {user && (
           <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         )}

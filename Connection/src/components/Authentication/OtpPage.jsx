@@ -3,7 +3,6 @@ import { otpVerification } from "../../api/UserApi";
 import toast, { Toaster } from "react-hot-toast";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
-
 const otpCss = {
   width: "40px",
   height: "40px",
@@ -13,10 +12,9 @@ const otpCss = {
 };
 
 const Otp = ({ length = 6 }) => {
-  const navigate=useNavigate()
-  const location=useLocation()
-  const userData=location.state;
-  console.log(userData,"location");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const userData = location.state;
   const inputRef = useRef([]);
   const [value, setValue] = useState(new Array(length).fill(""));
 
@@ -33,7 +31,6 @@ const Otp = ({ length = 6 }) => {
     }
 
     const finalValue = newValue.join("");
-    console.log(finalValue, 'finalValue');
   };
 
   const onKeyDownHandler = (e, index) => {
@@ -42,17 +39,14 @@ const Otp = ({ length = 6 }) => {
     }
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const finalValue = value.join("");
-    const response=await otpVerification({finalValue,userData})
-    toast(response.message)
-    console.log(response, 'response');
-    if(response.success){
-      navigate('/login')
-
+    const response = await otpVerification({ finalValue, userData });
+    toast(response.message);
+    if (response.success) {
+      navigate("/login");
     }
-    // Perform the submit action here
   };
 
   return (
@@ -63,7 +57,6 @@ const Otp = ({ length = 6 }) => {
             <span className="font-prompt-semibold text-4xl mt-20">
               Connection
             </span>
-            {/* <img className="rounded-md" src={meta} alt="" /> */}
           </div>
         </div>
 
@@ -89,14 +82,15 @@ const Otp = ({ length = 6 }) => {
                             maxLength={1}
                             onChange={(e) => onChangeHandler(e, index)}
                             onKeyDown={(e) => onKeyDownHandler(e, index)}
-                            ref={(reference) => (inputRef.current[index] = reference)}
+                            ref={(reference) =>
+                              (inputRef.current[index] = reference)
+                            }
                             className="border w-10 h-10 text-center p-3 rounded-md block bg-white focus:border-2 focus:outline-none appearance-none mx-1"
                             style={otpCss}
                           />
                         ))}
                       </div>
                       <div className="flex justify-center items-center bottom-0">
-                        {/* Timer or Resend Button could go here */}
                       </div>
                     </div>
                   </div>
@@ -109,12 +103,10 @@ const Otp = ({ length = 6 }) => {
                     Confirm
                   </button>
                 </div>
-                <div 
-                className="flex w-full h-fit justify-start items-center text-[13px] text-primary">
+                <div className="flex w-full h-fit justify-start items-center text-[13px] text-primary">
                   <span className="cursor-pointer w-fit h-fit flex">
                     <svg
-               onClick={() => navigate('/signup')}
-
+                      onClick={() => navigate("/signup")}
                       stroke="currentColor"
                       fill="currentColor"
                       strokeWidth="0"
@@ -129,7 +121,6 @@ const Otp = ({ length = 6 }) => {
                         d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"
                       ></path>
                     </svg>
-                    {/* <span onClick={backhandle}>Back</span> */}
                   </span>
                 </div>
               </div>
@@ -137,7 +128,7 @@ const Otp = ({ length = 6 }) => {
           </form>
         </div>
       </div>
-      <Toaster/>
+      <Toaster />
     </div>
   );
 };

@@ -9,9 +9,6 @@ console.log("Token from localStorage:", token);
 
 instance.defaults.headers.common["Authorization"] = token ? `Bearer ${token}` : "";
 instance.defaults.headers.post["Content-Type"] = "application/json";
-
-console.log("Authorization Header:", instance.defaults.headers.common["Authorization"]);
-
 instance.interceptors.request.use(
   (request) => {
     console.log("Request interceptor - Start:", request);
@@ -33,6 +30,4 @@ instance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-
 export default instance;

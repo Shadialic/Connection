@@ -5,7 +5,6 @@ import { Box } from "@mui/material";
 import SingleChat from "./SingleChat";
 
 function ChatBox({ fetchAgain, setFetchAgain }) {
-  const {selectedChat}=useChatState()
   return (
     <>
       <Box className="flex flex-col w-full h-full">

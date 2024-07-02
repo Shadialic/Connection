@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { UserData } from "../../api/UserApi";
+import { UserData, userSigninGoogle } from "../../api/UserApi";
 import { FcGoogle } from "react-icons/fc";
 import sganime from "../../assets/video/Sloop.mp4";
+import axios from "axios";
+import { useGoogleLogin } from "@react-oauth/google";
 
 function SignupForm() {
   const navigate = useNavigate();
@@ -11,12 +13,44 @@ function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [image, setImage] = useState(null);
+  const [user, setUser] = useState([]);
 
   const validateEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   };
-
+  const GoogleLogin = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: () => toast.error("Google login failed"),
+  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (user) {
+          const response = await axios.get(
+            `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.access_token}`,
+                Accept: "application/json",
+              },
+            }
+          );
+          const result = await userSigninGoogle(response.data);
+          if (result.data.created) {
+            toast(result.data.message);
+            localStorage.setItem("token", result.data.token);
+            navigate("/chats");
+          } else {
+            toast.error(result.data.message);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [user]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const trimmedUserName = userName.trim();
@@ -61,14 +95,17 @@ function SignupForm() {
         loop
         autoPlay
         muted
-        className="h-full w-[30%] object-cover"
+        className="h-full w-[35%] object-cover"
       ></video>
       <div className="w-full mt-[1rem]">
         <div className="flex flex-col gap-1">
           <h1 className="text-black text-2xl font-bold ml-[10rem]">
             Sign up to Connections
           </h1>
-          <div className="flex flex-row items-center gap-2 ml-[10rem] border-2 border-gray-200 w-[22rem] justify-center p-3 rounded-full cursor-pointer">
+          <div
+            onClick={GoogleLogin}
+            className="flex flex-row items-center gap-2 ml-[10rem] border-2 border-gray-200 w-[22rem] justify-center p-3 rounded-full cursor-pointer"
+          >
             <FcGoogle className="w-5 h-5" />
             <button className="font-semibold">Sign up with Google</button>
           </div>

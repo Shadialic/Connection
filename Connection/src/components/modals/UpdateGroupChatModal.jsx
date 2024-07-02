@@ -14,9 +14,13 @@ import {
 import toast, { Toaster } from "react-hot-toast";
 import { useChatState } from "../../context/ChatProvider";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
-
 import remove from "../../assets/removeicon.png";
-import { SearchUsers, renameGroup, groupAdd,removeParticipant } from "../../api/UserApi"; // Ensure groupAdd and removeParticipant are imported
+import {
+  SearchUsers,
+  renameGroup,
+  groupAdd,
+  removeParticipant,
+} from "../../api/UserApi"; // Ensure groupAdd and removeParticipant are imported
 
 const style = {
   position: "absolute",
@@ -34,7 +38,7 @@ function UpdateGroupChatModal({
   handleClose,
   setFetchAgain,
   fetchAgain,
-  fetchMessages
+  fetchMessages,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -104,9 +108,8 @@ function UpdateGroupChatModal({
   };
 
   const removeParticipants = async (participantId) => {
-    if(selectedChat.adminId!==user.id&&participantId!==user.id){
-toast('Only admins can remove someone!')
-      
+    if (selectedChat.adminId !== user.id && participantId !== user.id) {
+      toast("Only admins can remove someone!");
     }
     const response = await removeParticipant({
       ChatId: selectedChat.id,
@@ -122,7 +125,6 @@ toast('Only admins can remove someone!')
   };
 
   const handleRemove = () => {
-    // Implement the logic for leaving the group
   };
 
   return (
@@ -204,11 +206,11 @@ toast('Only admins can remove someone!')
             />
           </div>
         </form>
-        <List >
+        <List>
           {searchResults &&
             searchResults.map((user) => (
               <ListItem
-              className="hover:bg-[#8338ec] hover:text-[#fff] rounded-md"
+                className="hover:bg-[#8338ec] hover:text-[#fff] rounded-md"
                 key={user.id}
                 onClick={() => handleAddUser(user)}
               >
@@ -232,7 +234,7 @@ toast('Only admins can remove someone!')
         >
           Leave Group
         </Button>
-      <Toaster />
+        <Toaster />
       </Box>
     </Modal>
   );

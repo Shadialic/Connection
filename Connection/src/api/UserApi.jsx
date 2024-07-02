@@ -31,8 +31,15 @@ export async function otpVerification(otp) {
     console.log(response.data);
     return response.data;
   } catch (err) {
-    console.error("Error in UserData:", err);
     throw err;
+  }
+}
+export async function userSigninGoogle(userData) {
+  try {
+    const response = await UserApi.post("/userSigninWithGoole", userData);
+    return response;
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -70,7 +77,6 @@ export async function SearchUsers(searchQuery) {
     const response = await UserApi.get(
       `/searchUsers?search=${encodeURIComponent(searchQuery)}`
     );
- 
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -80,7 +86,6 @@ export async function SearchUsers(searchQuery) {
 export async function getAllUsers() {
   try {
     const response = await UserApi.get("/getAllUsers/");
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -98,14 +103,12 @@ export async function fetchingChats() {
   }
 }
 export async function CreateGroup(data) {
-  console.log(data,'imaggggggggg');
   try {
     const response = await UserApi.post("/chat/group",data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -115,7 +118,6 @@ export async function CreateGroup(data) {
 export async function renameGroup(data) {
   try {
     const response = await UserApi.put("/chat/rename",data);
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -125,7 +127,6 @@ export async function renameGroup(data) {
 export async function groupAdd(data) {
   try {
     const response = await UserApi.put("/chat/groupadd",data);
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -135,7 +136,6 @@ export async function groupAdd(data) {
 export async function removeParticipant(data) {
   try {
     const response = await UserApi.put("/chat/groupremove",data);
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -146,7 +146,6 @@ export async function removeParticipant(data) {
 export async function sendNewMessage(data) {
   try {
     const response = await UserApi.post("/messages/",data);
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -156,7 +155,6 @@ export async function sendNewMessage(data) {
 export async function getAllMessages(chatId) {
   try {
     const response = await UserApi.get(`/messages/${chatId}`);
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -166,7 +164,6 @@ export async function getAllMessages(chatId) {
 export async function DeleteMessage(id) {
   try {
     const response = await UserApi.put(`/messages/delete/${id}`);
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
@@ -176,13 +173,13 @@ export async function DeleteMessage(id) {
 export async function EditingMessage(data) {
   try {
     const response = await UserApi.put(`/messages/edit`,{data});
-    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Error in UserData:", err);
     throw err;
   }
 }
+
 
 
 

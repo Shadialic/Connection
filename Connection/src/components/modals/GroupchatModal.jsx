@@ -31,11 +31,9 @@ function GroupchatModal({ open, handleClose }) {
   const handleGroupNameChange = (e) => {
     setGroupName(e.target.value);
   };
-  console.log("-=-=-=-", groupName, selectedUsers, groupImage);
   const handleSearchChange = async (e) => {
     setSearch(e.target.value);
     const response = await SearchUsers(e.target.value);
-
     if (response) {
       const data = response.slice(0, 3);
       setSearchResult(data);
@@ -48,8 +46,6 @@ function GroupchatModal({ open, handleClose }) {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const data = await uploadToCloudinary(file);
-      console.log(data, "imagessss");
-
       setGroupImage(data.url);
     }
   };
@@ -74,13 +70,11 @@ function GroupchatModal({ open, handleClose }) {
     } else if (selectedUsers.length < 2) {
       toast.error("Add at least two members");
     } else {
-     
       const response = await CreateGroup({
         chatName: groupName,
         users: JSON.stringify(selectedUsers),
         groupPhoto: groupImage,
       });
-      console.log(response, "wwwwwwwwwwwwwwww");
       setChats([response, ...Chats]);
       toast.success("New Group Chat Created!");
       setGroupName("");

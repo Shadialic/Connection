@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TextField, IconButton, Badge } from "@material-ui/core";
 import toast, { Toaster } from "react-hot-toast";
-import { jwtDecode } from "jwt-decode"; // Corrected import statement
+import { jwtDecode } from "jwt-decode";
 import { SearchOutlined } from "@material-ui/icons";
 import { useChatState } from "../../context/ChatProvider";
 import { fetchingChats } from "../../api/UserApi";
@@ -12,11 +12,10 @@ import {
   getNotificationCount,
   getSender,
   getSenderImage,
-} from "../../config/ChatLogics"; // Included getNotification function
+} from "../../config/ChatLogics";
 import GroupchatModal from "../modals/GroupchatModal";
 
 function MyChats({ fetchAgain }) {
-  const [loggerUser, setLoggerUser] = useState();
   const {
     selectedChat,
     setSelectedChat,
@@ -26,21 +25,8 @@ function MyChats({ fetchAgain }) {
     notification,
     setNotification,
   } = useChatState();
-
-  const [openProfile, setOpenProfile] = useState(false); // State declaration for openProfile
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedUser = jwtDecode(token);
-        setLoggerUser(decodedUser);
-      } catch (error) {
-        console.error("Error decoding token:", error);
-      }
-    }
-    fetchChats();
-  }, [fetchAgain]);
+  const [loggerUser, setLoggerUser] = useState();
+  const [openProfile, setOpenProfile] = useState(false);
 
   const fetchChats = async () => {
     try {
@@ -52,10 +38,24 @@ function MyChats({ fetchAgain }) {
     }
   };
 
+  useEffect(() => {
+    const verify = async () => {
+      const token = await localStorage.getItem("token");
+      if (token) {
+        try {
+          const decodedUser = jwtDecode(token);
+          setLoggerUser(decodedUser);
+        } catch (error) {
+          console.error("Error decoding token:", error);
+        }
+      }
+    };
+    verify();
+    fetchChats();
+  }, [fetchAgain]);
+
   const handleOpenProfile = () => setOpenProfile(true);
   const handleCloseProfile = () => setOpenProfile(false);
-
-  // Function to calculate notification counts
 
   return (
     <Box
@@ -104,74 +104,79 @@ function MyChats({ fetchAgain }) {
         overflowY="hidden"
       >
         {Chats ? (
-          Chats.map((chat) => (
-            <>
-              <div
-                key={chat.id}
-                className={`py-3 px-5  ${
-                  selectedChat === chat
-                    ? "bg-[#8338ec] text-white"
-                    : "bg-white text-black"
-                } hover:bg-[#8338ec] hover:text-[#fff] rounded-md`}
-                onClick={() => {
-                  setSelectedChat(chat);
-                  setNotification(
-                    notification.filter((n) => n.chatId !== chat.id)
-                  );
-                }}
-              >
-                <div class="divide-y divide-gray-200">
-                  <div className="flex items-center">
-                    <Avatar
-                      className="rounded-full items-start flex-shrink-0 mr-3"
-                      src={
-                        chat.isGroupChat
-                          ? chat.groupImage
-                          : getSenderImage(loggerUser, chat.participants)
-                      }
-                      width="32"
-                      height="32"
-                      alt="Marie Zulfikar"
-                    />
-                    <div className="w-full">
-                      <h1 className="text-lg  ">
-                        {!chat.isGroupChat
-                          ? getSender(loggerUser, chat.participants)
-                          : chat.chatName}{" "}
-                        <span className="w-full flex justify-end items-end pr-2">
-                          <Badge
-                            badgeContent={getNotificationCount(
-                              chat,
-                              notification,
-                              loggerUser
-                            )}
-                            color="primary"
-                          />{" "}
-                        </span>
-                      </h1>
+          Chats.map(
+            (chat) =>
+              chat && (
+                <>
+                  <div
+                    key={chat.id}
+                    className={`py-3 px-5 ${
+                      selectedChat === chat
+                        ? "bg-[#8338ec] text-white"
+                        : "bg-white text-black"
+                    } hover:bg-[#8338ec] hover:text-[#fff] rounded-md`}
+                    onClick={() => {
+                      setSelectedChat(chat);
+                      setNotification(
+                        notification.filter((n) => n.chatId !== chat.id)
+                      );
+                    }}
+                  >
+                    <div className="divide-y divide-gray-200">
+                      <div className="flex items-center">
+                        <Avatar
+                          className="rounded-full items-start flex-shrink-0 mr-3"
+                          src={
+                            chat.isGroupChat
+                              ? chat.groupImage
+                              : getSenderImage(loggerUser, chat.participants)
+                          }
+                          width="32"
+                          height="32"
+                          alt="User Avatar"
+                        />
+                        <div className="w-full">
+                          <h1 className="text-lg">
+                            {!chat.isGroupChat
+                              ? getSender(loggerUser, chat.participants)
+                              : chat.chatName}{" "}
+                            <span className="w-full flex justify-end items-end pr-2">
+                              <Badge
+                                badgeContent={getNotificationCount(
+                                  chat,
+                                  notification,
+                                  loggerUser
+                                )}
+                                color="primary"
+                              />{" "}
+                            </span>
+                          </h1>
 
-                      <div className="text-[11px]">
-                        {" "}
-                        {chat.latestMessage && (
-                          <>
-                            <b>
-                              {chat.isGroupChat &&
-                                chat.latestMessage.sender.userName}
-                            </b>{" "}
-                            {chat.latestMessage.content.length > 50
-                              ? chat.latestMessage.content.substring(0, 51) +
-                                "..."
-                              : chat.latestMessage.content}
-                          </>
-                        )}
+                          <div className="text-[11px]">
+                            {" "}
+                            {chat.latestMessage && (
+                              <>
+                                <b>
+                                  {chat.isGroupChat &&
+                                    chat.latestMessage.sender.userName}
+                                </b>{" "}
+                                {chat.latestMessage.content.length > 50
+                                  ? chat.latestMessage.content.substring(
+                                      0,
+                                      51
+                                    ) + "..."
+                                  : chat.latestMessage.content}
+                              </>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className="w-full border-b-2 border-gray-200"></div>
-            </>
-          ))
+                  <div className="w-full border-b-2 border-gray-200"></div>
+                </>
+              )
+          )
         ) : (
           <ChatLoading />
         )}

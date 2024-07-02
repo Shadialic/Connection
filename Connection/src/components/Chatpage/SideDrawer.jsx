@@ -18,7 +18,6 @@ import toast, { Toaster } from "react-hot-toast";
 import { Avatar } from "@mui/material";
 
 function SideDrawer({ toggleDrawer }) {
-
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState();
   const [loading, setLoading] = useState(false);
@@ -33,8 +32,6 @@ function SideDrawer({ toggleDrawer }) {
       toast("Please Enter something in search");
     }
     const response = await SearchUsers(searchQuery);
-    console.log(response, "response");
-
     setLoading(true);
     setTimeout(() => {
       setSearchResults(response);
@@ -44,10 +41,8 @@ function SideDrawer({ toggleDrawer }) {
 
   const accessChat = async (userid) => {
     try {
-      console.log(userid,'userid');
       setLoading(true);
       const response = await LoadUser(userid);
-      console.log(response,"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
       if (!Chats.find((c) => c.id === response.id)) {
         setChats([response, ...Chats]);
       }
@@ -59,7 +54,7 @@ function SideDrawer({ toggleDrawer }) {
   };
 
   const list = () => (
-    <Box sx={{ width: 250 }} role="presentation">
+    <Box sx={{ width: 350 }} role="presentation">
       <h1 className="p-2 font-prompt-semibold">Search Users</h1>
       <TextField
         fullWidth
@@ -83,31 +78,34 @@ function SideDrawer({ toggleDrawer }) {
         <ChatLoading />
       ) : (
         <List>
-          {searchResults&&searchResults.map((user) => (
-            <ListItem key={user.id} disablePadding>
-              <ListItemButton onClick={() => accessChat(user.id)}>
-                {user.picture ? (
-                  <Avatar
-                    alt="Remy Sharp"
-                    src={user.picture}
-                    sx={{  width: 46, height: 46}}
-                  />
-                ) : (
-                  <ListItemIcon>
-                    <AccountCircleIcon />
-                  </ListItemIcon>
-                )}
-
-                <ListItemText primary={user.userName} p={4}/>
-              </ListItemButton>
-            </ListItem>
-          ))}
+          {searchResults &&
+            searchResults.map((user) => (
+              <ListItem key={user.id} disablePadding>
+                <ListItemButton onClick={() => accessChat(user.id)}>
+                  {user.picture ? (
+                    <Avatar
+                      alt="Remy Sharp"
+                      src={user.picture}
+                      sx={{ width: 46, height: 46 }}
+                    />
+                  ) : (
+                    <ListItemIcon>
+                      <AccountCircleIcon />
+                    </ListItemIcon>
+                  )}
+                  <div className="flex flex-col pl-2">
+                    <ListItemText primary={user.userName} p={4} pl={2} />
+                    <h1 primary={user.email} p={4} className="text-[10px]" />
+                    <h1 className="text-[13px]">{user.email}</h1>
+                  </div>
+                </ListItemButton>
+              </ListItem>
+            ))}
         </List>
       )}
       <Toaster />
     </Box>
   );
-
   return list();
 }
 

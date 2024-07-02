@@ -60,7 +60,6 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
 
     newSocket.on("typing", () => setIsTyping(true));
     newSocket.on("stop typing", () => setIsTyping(false));
-
     return () => newSocket.disconnect();
   }, [user]);
 
@@ -105,17 +104,15 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
       setLoading(false);
     }
   };
+
   const handleFile = async (e) => {
     const file = e.target.files[0];
     const data = await uploadToCloudinary(file);
-    console.log(data, "d");
     setFiles(data.url);
   };
-  console.log(files, "pp");
 
   const sendMessage = async (e) => {
     if (e) e.preventDefault();
-
     if (newMessage.trim() || files) {
       socket.emit("stop typing", selectedChat.id);
       try {
@@ -265,7 +262,10 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
             </div>
           ) : (
             <>
-              <ScrollableChat messages={messages}  fetchMessages={fetchMessages}  />
+              <ScrollableChat
+                messages={messages}
+                fetchMessages={fetchMessages}
+              />
               {isTyping ? (
                 <div>
                   <Lottie options={defaultOptions} width={70} />
@@ -297,7 +297,10 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                             backgroundColor="#FF4081"
                           />
                         ) : (
-                          <form className="w-[90%] sm:w-[65%]" onSubmit={sendMessage}>
+                          <form
+                            className="w-[90%] sm:w-[65%]"
+                            onSubmit={sendMessage}
+                          >
                             <label htmlFor="chat" className="sr-only">
                               Your message
                             </label>
@@ -373,11 +376,11 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
             justifyContent: "center",
             height: "100%",
           }}
+          className="mt-24"
         >
           <Typography
             variant="h6"
             sx={{
-              fontFamily: "Work Sans",
               fontSize: { xs: "20px", md: "28px" },
             }}
           >

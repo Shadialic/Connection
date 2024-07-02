@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LoginData } from "../../api/UserApi";
+import { LoginData, userSigninGoogle } from "../../api/UserApi";
 import toast, { Toaster } from "react-hot-toast";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import lganime from "../../assets/video/login.mp4";
+import axios from "axios";
 
 function LoginForm() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState([]);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,8 +19,36 @@ function LoginForm() {
     onSuccess: (codeResponse) => setUser(codeResponse),
     onError: () => toast.error("Google login failed"),
   });
-
-  const navigate = useNavigate();
+  console.log(user, "AAAAAAAAAA");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (user) {
+          const response = await axios.get(
+            `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.access_token}`,
+                Accept: "application/json",
+              },
+            }
+          );
+          const result = await userSigninGoogle(response.data);
+          if (result.data.created) {
+            toast(result.data.message);
+            localStorage.setItem("token", result.data.token);
+            navigate("/chats");
+          } else {
+            toast.error(result.data.message);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [user]);
+  console.log();
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -69,7 +100,7 @@ function LoginForm() {
         loop
         autoPlay
         muted
-        className="h-full w-[30%] object-cover"
+        className="w-[35%] h-full object-cover hidden md:block"
       ></video>
       <div className="w-full mt-[4rem]">
         <div className="flex flex-col gap-6">
@@ -90,7 +121,7 @@ function LoginForm() {
             <span className="px-4 text-gray-500">or sign in with email</span>
             <div className="w-24 border-b-2 border-gray-200"></div>
           </span>
-          <div className="flex flex-col ml-[10rem] gap-2">
+          <div className="flex flex-col ml-[10rem] gap-2 ">
             <label htmlFor="email" className="font-semibold">
               Email
             </label>

@@ -6,22 +6,20 @@ import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Profile from "../modals/Profile";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import { Box } from "@mui/material";
 import { useChatState } from "../../context/ChatProvider";
 import { useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import { getSender, getSenderImage } from "../../config/ChatLogics";
-
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 function NavBar() {
-  const [openGroup, setOpenGroup] = useState(false);
+  const navigate = useNavigate();
 
+  const [openGroup, setOpenGroup] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openProfile, setOpenProfile] = useState(false);
   const [anchorElNotifications, setAnchorElNotifications] = useState(null);
   const { selectedChat, setSelectedChat, user, notification, setNotification } =
     useChatState();
-  const navigate = useNavigate();
 
   const open = Boolean(anchorEl);
   const notificationsOpen = Boolean(anchorElNotifications);
@@ -29,25 +27,19 @@ function NavBar() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-
   const handleNotificationsClick = (event) => {
     setAnchorElNotifications(event.currentTarget);
   };
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const handleNotificationsClose = () => {
     setAnchorElNotifications(null);
   };
-
   function notificationsLabel(count) {
     if (count === 0) {
       return "no notifications";
@@ -57,8 +49,8 @@ function NavBar() {
     }
     return `${count} notifications`;
   }
- const handleCloseGroup = () => {
-  setOpenGroup(false);
+  const handleCloseGroup = () => {
+    setOpenGroup(false);
   };
 
   const handleOpenGroup = () => {
@@ -188,7 +180,7 @@ function NavBar() {
               Profile
             </MenuItem>
             <MenuItem onClick={handleLogout}>
-              <ListItemIcon>{/* Add Logout icon here */}</ListItemIcon>
+              <ExitToAppIcon />
               Logout
             </MenuItem>
           </Menu>

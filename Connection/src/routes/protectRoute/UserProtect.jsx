@@ -4,9 +4,7 @@ import { useChatState } from "../../context/ChatProvider";
 
 function UserProtect({ children }) {
   const { user } = useChatState();
-
-  // Conditional rendering based on user state
-  if (localStorage.getItem('token')) {
+  if (localStorage.getItem("token")) {
     return children;
   } else {
     return <Navigate to="/login" />;

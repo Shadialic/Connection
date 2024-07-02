@@ -6,10 +6,10 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 import { DeleteMessage, EditingMessage } from "../../api/UserApi";
 import toast from "react-hot-toast";
 
-function ScrollableChat({ messages ,fetchMessages}) {
+function ScrollableChat({ messages, fetchMessages }) {
   const scroll = useRef();
   const { user } = useChatState();
-  const [deleteMessage,setDeleteMessage]=useState()
+  const [deleteMessage, setDeleteMessage] = useState();
   const [editingMessage, setEditingMessage] = useState(null);
   const [newContent, setNewContent] = useState("");
 
@@ -17,36 +17,30 @@ function ScrollableChat({ messages ,fetchMessages}) {
     scroll.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleDelete = async(messageId) => {
-    const response=await DeleteMessage(messageId)
-    toast(response.message)
-    setDeleteMessage(messageId)
+  const handleDelete = async (messageId) => {
+    const response = await DeleteMessage(messageId);
+    toast(response.message);
+    setDeleteMessage(messageId);
   };
-  useEffect(()=>{
-    if(deleteMessage){
-       fetchMessages()
+  useEffect(() => {
+    if (deleteMessage) {
+      fetchMessages();
     }
-  },[deleteMessage])
+  }, [deleteMessage]);
 
   const handleEdit = (message) => {
     setEditingMessage(message);
     setNewContent(message.content);
   };
 
-  // const handleSaveEdit = (messageId) => {
-  //   onEditMessage(messageId, newContent);
-  //   setEditingMessage(null);
-  // };
-
-  const handleKeyPress =async(e, messageId) => {
+  const handleKeyPress = async (e, messageId) => {
     if (e.key === "Enter") {
-      const response=await EditingMessage({
+      const response = await EditingMessage({
         newContent,
-        messageId
-      })
-      toast(response.message)
-      fetchMessages()
-      // handleSaveEdit(messageId);
+        messageId,
+      });
+      toast(response.message);
+      fetchMessages();
     }
   };
 
@@ -83,7 +77,6 @@ function ScrollableChat({ messages ,fetchMessages}) {
                       type="text"
                       value={newContent}
                       onChange={(e) => setNewContent(e.target.value)}
-                      // onBlur={() => handleSaveEdit(m.id)}
                       onKeyPress={(e) => handleKeyPress(e, m.id)}
                       autoFocus
                       className="bg-gray-400 rounded-lg p-2 text-black"
@@ -100,9 +93,21 @@ function ScrollableChat({ messages ,fetchMessages}) {
               </div>
               <ContextMenu id={`contextmenu-${m.id}`}>
                 {!m.deleted && (
-                  <div className='bg-gray-200 p-2 shadow-md'>
-                    <MenuItem key={`edit-${m.id}`} onClick={() => handleEdit(m)} className="cursor-pointer">Edit</MenuItem>
-                    <MenuItem key={`delete-${m.id}`} onClick={() => handleDelete(m.id)} className="cursor-pointer">Delete</MenuItem>
+                  <div className="bg-gray-200 p-2 shadow-md">
+                    <MenuItem
+                      key={`edit-${m.id}`}
+                      onClick={() => handleEdit(m)}
+                      className="cursor-pointer"
+                    >
+                      Edit
+                    </MenuItem>
+                    <MenuItem
+                      key={`delete-${m.id}`}
+                      onClick={() => handleDelete(m.id)}
+                      className="cursor-pointer"
+                    >
+                      Delete
+                    </MenuItem>
                   </div>
                 )}
               </ContextMenu>
