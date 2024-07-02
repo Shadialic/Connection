@@ -82,8 +82,6 @@ const getAllMessages = async (req, res) => {
   try {
     const { chatId } = req.params;
     const numericChatId = Number(chatId);
-
-
     // Find the chat including participants
     const chat = await Chat.findOne({
       where: { id: chatId },
@@ -137,5 +135,52 @@ const getAllMessages = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+const deleteMessage = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-export { sendMessae, getAllMessages };
+    // Find the message by ID and delete it
+    const deleted = await Message.destroy({
+      where: { id: id },
+    });
+
+    if (deleted === 0) {
+      // If no rows were affected, return message indicating the message was not found
+      return res.status(404).json({ message: 'Message not found' });
+    }
+
+    // Return success response
+    res.json({ message: 'Message deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to delete message' });
+  }
+};
+
+const editMessage = async (req, res) => {
+  try {
+    console.log(req.body,'req.body');
+    const { newContent, messageId } = req.body.data;
+
+    // Update the message by ID
+    const updatedMessage = await Message.update(
+      { content: newContent },
+      { where: { id: messageId } }
+    );
+
+    if (updatedMessage[0] === 0) {
+      // If no rows were affected, return message indicating the message was not found
+      return res.status(404).json({ message: 'Message not found' });
+    }
+
+    // Return success response
+    res.json({ message: 'Message updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to update message' });
+  }
+};
+
+
+
+export { sendMessae, getAllMessages,deleteMessage,editMessage};
