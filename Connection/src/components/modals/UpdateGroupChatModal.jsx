@@ -20,7 +20,7 @@ import {
   renameGroup,
   groupAdd,
   removeParticipant,
-} from "../../api/UserApi"; // Ensure groupAdd and removeParticipant are imported
+} from "../../api/UserApi"; 
 
 const style = {
   position: "absolute",

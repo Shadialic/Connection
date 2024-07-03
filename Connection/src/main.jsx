@@ -5,7 +5,9 @@ import "./index.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import ChatProvider from "./context/ChatProvider.jsx";
-const clientId = "65151939969-bfrlg8dlrm3c5baiu9nbaeohb5f72hev.apps.googleusercontent.com"
+
+const clientId = import.meta.env.VITE_CLIENT_ID
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Router>

@@ -1,13 +1,13 @@
 import { Cloudinary } from 'cloudinary-core';
 
 const cloudinary = new Cloudinary({
-  cloud_name: "dveis0axa",
+  cloud_name: import.meta.env.VITE_CLOUDINARY_NAME,
   secure: true
 });
 export const uploadToCloudinary = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', "Edu-tap"); 
+  formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET); 
   try {
     const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudinary.config().cloud_name}/image/upload`, {
       method: 'POST',
