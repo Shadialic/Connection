@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { otpVerification } from "../../api/UserApi";
 import toast, { Toaster } from "react-hot-toast";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const otpCss = {
   width: "40px",
