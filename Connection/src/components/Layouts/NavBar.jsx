@@ -10,7 +10,7 @@ import { useChatState } from "../../context/ChatProvider";
 import { useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import { getSender, getSenderImage } from "../../config/ChatLogics";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import LogoutIcon from '@mui/icons-material/Logout';
 function NavBar() {
   const navigate = useNavigate();
 
@@ -179,9 +179,9 @@ function NavBar() {
               <Avatar />
               Profile
             </MenuItem>
-            <MenuItem onClick={handleLogout}>
-              <ExitToAppIcon />
-              Logout
+            <MenuItem onClick={handleLogout} >
+              <LogoutIcon  />
+             <span className='pl-2'> Logout</span>
             </MenuItem>
           </Menu>
         </div>
