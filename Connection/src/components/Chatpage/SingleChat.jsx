@@ -24,8 +24,7 @@ import { uploadToCloudinary } from "../../utils/cloudnery/Cloudnery";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const ENDPOINT = "http://localhost:3000"
-console.log( import.meta.env.VITE_BASEURL,' import.meta.env.VITE_BASEURL');
+const ENDPOINT = import.meta.env.VITE_BASEURL;
 function SingleChat({ fetchAgain, setFetchAgain }) {
   const { user, selectedChat, setSelectedChat, notification, setNotification } =
     useChatState();
