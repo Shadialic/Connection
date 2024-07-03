@@ -9,21 +9,21 @@ import axios from "axios";
 
 function LoginForm() {
   const navigate = useNavigate();
-  const [user, setUser] = useState([]);
+  const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
   const GoogleLogin = useGoogleLogin({
-    onSuccess: (codeResponse) => setUser(codeResponse),
+    onSuccess: (codeResponse) => setUsers(codeResponse),
     onError: () => toast.error("Google login failed"),
   });
-  console.log(user, "AAAAAAAAAA");
+  console.log(users, "AAAAAAAAAA");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (user) {
+        if (users) {
           const response = await axios.get(
             `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
             {

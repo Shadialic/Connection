@@ -24,8 +24,8 @@ import { uploadToCloudinary } from "../../utils/cloudnery/Cloudnery";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const ENDPOINT = import.meta.env.VITE_BASEURL;
-
+const ENDPOINT = "http://localhost:3000"
+console.log( import.meta.env.VITE_BASEURL,' import.meta.env.VITE_BASEURL');
 function SingleChat({ fetchAgain, setFetchAgain }) {
   const { user, selectedChat, setSelectedChat, notification, setNotification } =
     useChatState();
@@ -57,7 +57,6 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
     newSocket.on("connected", () => {
       console.log("Socket connected");
     });
-
     newSocket.on("typing", () => setIsTyping(true));
     newSocket.on("stop typing", () => setIsTyping(false));
     return () => newSocket.disconnect();
@@ -222,7 +221,6 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
               fontSize: { xs: "28px", md: "30px" },
             }}
           >
-            {/* <ArrowBackIcon sx={{ fontSize: 40, color: 'black' }} /> */}
             <IconButton
               d={{ base: "flex", md: "none" }}
               icon={<ArrowBackIcon />}
