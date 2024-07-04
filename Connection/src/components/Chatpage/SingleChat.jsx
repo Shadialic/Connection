@@ -18,7 +18,7 @@ import ScrollableChat from "./ScrollableChat";
 import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../../animations/typin.json";
-import { ReactMic } from "react-mic";
+// import { ReactMic } from "react-mic";
 import axios from "axios";
 import { uploadToCloudinary } from "../../utils/cloudnery/Cloudnery";
 import CloseIcon from "@mui/icons-material/Close";
@@ -286,13 +286,13 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                     <Grid container className="w-full">
                       <Grid item xs={12}>
                         {record ? (
-                          <ReactMic
-                            record={record}
-                            className="sound-wave w-[20%]"
-                            onStop={onStopRecording}
-                            strokeColor="#000000"
-                            backgroundColor="#FF4081"
-                          />
+                          // <ReactMic
+                          //   record={record}
+                          //   className="sound-wave w-[20%]"
+                          //   onStop={onStopRecording}
+                          //   strokeColor="#000000"
+                          //   backgroundColor="#FF4081"
+                          // />
                         ) : (
                           <form
                             className="w-[90%] sm:w-[65%]"
