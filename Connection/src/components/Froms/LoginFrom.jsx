@@ -25,10 +25,10 @@ function LoginForm() {
       try {
         if (users) {
           const response = await axios.get(
-            `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+            `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${users.access_token}`,
             {
               headers: {
-                Authorization: `Bearer ${user.access_token}`,
+                Authorization: `Bearer ${users.access_token}`,
                 Accept: "application/json",
               },
             }
@@ -47,7 +47,7 @@ function LoginForm() {
       }
     };
     fetchData();
-  }, [user]);
+  }, [users]);
   console.log();
 
   const handleChange = (e) => {

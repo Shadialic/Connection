@@ -293,6 +293,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                           //   strokeColor="#000000"
                           //   backgroundColor="#FF4081"
                           // />
+                          <></>
                         ) : (
                           <form
                             className="w-[90%] sm:w-[65%]"
