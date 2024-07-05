@@ -82,7 +82,7 @@ function LoginForm() {
       toast(userData.alert);
       localStorage.setItem("token", userData.token);
       if (userData.status && userData.token) {
-        navigate("/chats");
+        navigate("/");
       }
     } catch (error) {
       console.error("Error during login:", error);

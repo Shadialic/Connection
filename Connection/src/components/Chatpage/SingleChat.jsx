@@ -16,7 +16,7 @@ import UpdateGroupChatModal from "../modals/UpdateGroupChatModal";
 import { getAllMessages, sendNewMessage } from "../../api/UserApi";
 import ScrollableChat from "./ScrollableChat";
 import io from "socket.io-client";
-import Lottie from "react-lottie";
+// import Lottie from "react-lottie";
 import animationData from "../../animations/typin.json";
 // import { ReactMic } from "react-mic";
 import axios from "axios";
@@ -265,7 +265,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
               />
               {isTyping ? (
                 <div>
-                  <Lottie options={defaultOptions} width={70} />
+                  {/* <Lottie options={defaultOptions} width={70} /> */}
                 </div>
               ) : (
                 <>

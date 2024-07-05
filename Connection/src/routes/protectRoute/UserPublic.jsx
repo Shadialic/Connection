@@ -3,7 +3,7 @@ import React from "react";
 
 function UserPublic(props) {
   if (localStorage.getItem("token")) {
-    return <Navigate to="/chats" />;
+    return <Navigate to="/" />;
   } else {
     <Navigate to="/login" />;
     return props.children;

@@ -13,7 +13,7 @@ function UserRoutes() {
     <div>
         <Routes>
             <Route path='/otp' element={<UserPublic><Otp/></UserPublic>}/>
-            <Route path='/chats' element={<UserProtect><ChatPage/> </UserProtect> }/>
+            <Route path='/' element={<UserProtect><ChatPage/> </UserProtect> }/>
             <Route path='/login' element={<UserPublic><UserLogin/></UserPublic>}/>
             <Route path='/signup' element={<UserPublic><SignupPage/></UserPublic>}/>
         </Routes>
